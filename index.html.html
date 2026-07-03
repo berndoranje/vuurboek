@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1c1611">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Vuurboek">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
+<title>Vuurboek — Kamado Kooklogboek</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{overscroll-behavior:none;background:#f3eee3;
+  --paper:#f3eee3;--panel:#eae3d4;--ink:#1f1a15;--muted:#6f6453;
+  --line:#d9cfbb;--ember:#cf4718;--char:#1c1611;
+  font-family:'Inter',system-ui,sans-serif;color:var(--ink);
+  background:radial-gradient(120% 80% at 50% -10%,#f7f3ea 0%,#f3eee3 55%);
+  min-height:100vh;-webkit-font-smoothing:antialiased;}
+.vb-main{max-width:600px;margin:0 auto;padding:18px 16px 96px;}
+.vb-top{position:sticky;top:0;z-index:10;background:var(--char);box-shadow:0 1px 0 #000,0 6px 20px rgba(0,0,0,.18);}
+.vb-top-inner{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:10px;padding:12px 14px;}
+.vb-brand{flex:1;display:flex;flex-direction:column;line-height:1;}
+.vb-brand-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:.22em;font-size:20px;color:#f3ede0;}
+.vb-brand-sub{font-family:'Barlow Condensed',sans-serif;font-weight:500;letter-spacing:.16em;text-transform:uppercase;font-size:10px;color:#b08458;margin-top:3px;}
+.vb-brandmark{display:grid;place-items:center;width:34px;height:34px;border-radius:8px;background:linear-gradient(160deg,#cf4718,#8c2f10);color:#fff;flex:none;}
+.vb-icon-btn{display:grid;place-items:center;width:38px;height:38px;border:none;background:rgba(255,255,255,.06);color:#f3ede0;border-radius:9px;cursor:pointer;flex:none;}
+.vb-icon-btn:hover{background:rgba(255,255,255,.13);}
+.vb-icon-btn:focus-visible,.vb-card:focus-visible,.vb-seg-btn:focus-visible,.vb-tab:focus-visible,
+input:focus-visible,textarea:focus-visible,select:focus-visible,.vb-btn:focus-visible{outline:2px solid var(--ember);outline-offset:2px;}
+.vb-muted{color:var(--muted);}.vb-center{text-align:center;padding:40px 0;}
+svg{display:block;}
+.vb-tabs{position:fixed;bottom:0;left:0;right:0;z-index:10;display:flex;background:var(--char);box-shadow:0 -2px 14px rgba(0,0,0,.2);padding-bottom:env(safe-area-inset-bottom);}
+.vb-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:none;background:none;padding:11px 0 13px;color:#7c7064;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:11px;}
+.vb-tab.on{color:var(--ember);}
+.vb-banner{background:#fbf0ec;border:1px solid #e7c4b8;color:#8a3a22;border-radius:11px;padding:11px 13px;font-size:13px;line-height:1.45;margin-bottom:16px;}
+.vb-banner b{font-weight:600;}
+.vb-search{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:11px;padding:10px 12px;margin-bottom:16px;color:var(--muted);}
+.vb-search input{flex:1;border:none;background:none;font-size:15px;color:var(--ink);outline:none;}
+.vb-clear{border:none;background:none;color:var(--muted);cursor:pointer;display:grid;place-items:center;padding:0;}
+.vb-filters{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px;}
+.vb-chip{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:7px 13px;font-family:'Barlow Condensed',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:12px;cursor:pointer;white-space:nowrap;}
+.vb-chip.on{background:var(--ember);border-color:var(--ember);color:#fff;}
+.vb-empty{text-align:center;padding:44px 20px;}
+.vb-empty-flame{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 18px;border-radius:50%;background:#fff;border:1px solid var(--line);color:var(--ember);}
+.vb-empty h2{font-family:'Barlow Condensed',sans-serif;font-size:24px;letter-spacing:.04em;margin:0 0 8px;}
+.vb-empty p{color:var(--muted);margin:0 auto 22px;max-width:340px;line-height:1.5;}
+.vb-cards{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;}
+.vb-card{width:100%;display:flex;text-align:left;background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden;cursor:pointer;padding:0;box-shadow:0 1px 2px rgba(0,0,0,.04);transition:transform .08s,box-shadow .15s;}
+.vb-card:hover,.vb-card:active{box-shadow:0 6px 18px rgba(60,40,20,.12);transform:translateY(-1px);}
+.vb-card-heat{width:7px;flex:none;}
+.vb-card-rub{padding-left:13px;align-items:center;gap:12px;}
+.vb-rub-tag{font-family:'Barlow Condensed',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.1em;font-size:10px;color:#fff;background:var(--char);border-radius:6px;padding:5px 8px;flex:none;}
+.vb-rub-tag.big{padding:7px 11px;font-size:11px;background:var(--ember);}
+.vb-card-body{flex:1;padding:13px 15px;min-width:0;}
+.vb-card-rub .vb-card-body{padding-left:0;}
+.vb-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.vb-card-head h3{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:19px;letter-spacing:.02em;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.vb-card-meat{color:var(--muted);font-size:13px;margin:2px 0 11px;}
+.vb-card-rub .vb-card-meat{margin-bottom:0;}
+.vb-card-stats{display:flex;gap:18px;}
+.vb-stat{display:flex;flex-direction:column;gap:1px;}
+.vb-stat-ic{color:var(--ember);}
+.vb-stat-val{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;margin-top:2px;}
+.vb-stat-lbl{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:9px;color:var(--muted);}
+.vb-flames{display:flex;gap:3px;color:var(--ember);}
+.vb-flame{border:none;background:none;padding:0;color:#cbbfa8;line-height:0;}
+.vb-flame.on{color:var(--ember);}
+.vb-form-title,.vb-detail-head h2{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:26px;letter-spacing:.02em;margin:0 0 18px;}
+.vb-field{display:flex;flex-direction:column;gap:7px;margin-bottom:15px;}
+.vb-field-lbl{font-family:'Barlow Condensed',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.12em;font-size:11px;color:var(--muted);}
+.vb-req{color:var(--ember);font-style:normal;margin-left:3px;}
+.vb-field input,.vb-field textarea,.vb-field select{font-family:'Inter',sans-serif;font-size:15px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 12px;width:100%;outline:none;-webkit-appearance:none;appearance:none;}
+.vb-field select{background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%236f6453' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;}
+.vb-field input::placeholder,.vb-field textarea::placeholder{color:#a89c87;}
+.vb-field textarea{resize:vertical;line-height:1.5;}
+.vb-row{display:flex;gap:12px;}.vb-row .vb-field{flex:1;}
+.vb-group{display:flex;flex-direction:column;gap:7px;margin-bottom:15px;}
+.vb-amt{display:flex;gap:8px;}
+.vb-amt input{flex:1;font-family:'Inter',sans-serif;font-size:15px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 12px;outline:none;}
+.vb-amt select{width:78px;flex:none;font-family:'Inter',sans-serif;font-size:15px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 26px 11px 12px;outline:none;-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%236f6453' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");background-repeat:no-repeat;background-position:right 9px center;}
+.vb-seg{display:flex;gap:6px;background:var(--panel);padding:4px;border-radius:11px;}
+.vb-seg-btn{flex:1;border:none;background:none;font-family:'Barlow Condensed',sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:13px;padding:8px 4px;border-radius:8px;color:var(--muted);cursor:pointer;}
+.vb-seg-btn.is-on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12);}
+.vb-heatbar{display:flex;align-items:center;gap:10px;margin:-4px 0 15px;}
+.vb-heatbar-fill{flex:1;height:8px;border-radius:5px;}
+.vb-heatbar-lbl{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.1em;font-size:11px;color:var(--muted);}
+.vb-hint{color:var(--ember);font-size:13px;margin:4px 0 0;}
+.vb-hint.vb-soft{color:var(--muted);}
+.vb-ings,.vb-fases{display:flex;flex-direction:column;gap:8px;}
+.vb-ing-row{display:flex;gap:7px;align-items:center;}
+.vb-ing-row input,.vb-ing-row select{font-family:'Inter',sans-serif;font-size:14px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 10px;color:var(--ink);outline:none;-webkit-appearance:none;appearance:none;}
+.vb-ing-name{flex:1;min-width:0;}
+.vb-ing-qty{width:58px;text-align:right;}
+.vb-ing-unit{width:70px;flex:none;padding-right:22px !important;background-image:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%236f6453' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");background-repeat:no-repeat;background-position:right 7px center;}
+.vb-row-del{flex:none;width:32px;height:36px;display:grid;place-items:center;border:none;background:#f0e6d8;color:#9a3a26;border-radius:8px;cursor:pointer;padding:0;}
+.vb-add-row{display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:none;border:1px dashed var(--line);color:var(--muted);border-radius:9px;padding:9px 12px;font-family:'Barlow Condensed',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:.08em;font-size:12px;cursor:pointer;}
+.vb-add-row:hover{border-color:var(--ember);color:var(--ember);}
+.vb-fase{display:flex;flex-direction:column;gap:7px;background:var(--panel);border-radius:11px;padding:9px 10px;}
+.vb-fase-top{display:flex;align-items:center;gap:7px;}
+.vb-fase-no{flex:none;width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:var(--char);color:#f3ede0;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;}
+.vb-fase-temp{display:flex;align-items:center;gap:4px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:0 8px;flex:none;}
+.vb-fase-tag{font-size:11px;color:var(--muted);white-space:nowrap;}
+.vb-fase-temp input{width:38px;border:none;background:none;font-size:14px;text-align:right;padding:9px 0;outline:none;color:var(--ink);}
+.vb-fase-deg{font-size:11px;color:var(--muted);}
+.vb-fase-top .vb-row-del{margin-left:auto;}
+.vb-fase-desc{width:100%;font-family:'Inter',sans-serif;font-size:14px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 10px;color:var(--ink);outline:none;}
+.vb-preview{margin:-4px 0 15px;background:var(--panel);border-radius:11px;padding:12px 14px;}
+.vb-ing-meta{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:11px;color:var(--muted);margin:0 0 8px;}
+.vb-ing-note{font-size:12px;color:var(--ember);margin:8px 0 0;}
+.vb-ing-list-view{list-style:none;margin:0;padding:0;}
+.vb-ing-list-view li{display:flex;justify-content:space-between;gap:14px;padding:7px 0;border-bottom:1px dotted var(--line);}
+.vb-ing-list-view li:last-child{border-bottom:none;}
+.vb-ing-amt{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;white-space:nowrap;}
+.vb-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-family:'Barlow Condensed',sans-serif;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:14px;padding:12px 18px;border-radius:10px;border:1px solid transparent;cursor:pointer;}
+.vb-btn-primary{background:var(--ember);color:#fff;}
+.vb-btn-primary:hover{background:#b83d12;}
+.vb-btn-primary:disabled{background:#d8b9a6;cursor:not-allowed;}
+.vb-btn-ghost{background:#fff;border-color:var(--line);color:var(--ink);}
+.vb-btn-ghost:hover{background:var(--panel);}
+.vb-btn-danger{background:#a32814;color:#fff;}
+.vb-btn-block{width:100%;margin-bottom:11px;}
+.vb-form-actions,.vb-detail-actions{display:flex;gap:11px;margin-top:24px;}
+.vb-form-actions .vb-btn,.vb-detail-actions .vb-btn{flex:1;}
+.vb-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+.vb-detail-meat{color:var(--muted);margin:-12px 0 0;font-size:15px;}
+.vb-detail-date{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;margin:10px 0 18px;}
+.vb-gauges{display:flex;gap:12px;margin-bottom:22px;}
+.vb-gauge{flex:1;background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px 16px;display:flex;flex-direction:column;gap:4px;}
+.vb-gauge-lbl{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.12em;font-size:11px;color:var(--muted);}
+.vb-gauge-val{font-family:'Space Mono',monospace;font-weight:700;font-size:34px;line-height:1;}
+.vb-gauge-val i{font-size:15px;font-style:normal;margin-left:2px;color:var(--muted);}
+.vb-gauge-sub{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:10px;color:var(--muted);}
+.vb-block{margin:0 0 18px;}
+.vb-block-title{display:flex;align-items:center;gap:6px;font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.12em;font-size:12px;color:var(--ember);margin:0 0 8px;}
+.vb-block p{margin:0;line-height:1.55;}
+.vb-notes{white-space:pre-wrap;}
+.vb-fase-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+.vb-fase-list li{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;}
+.vb-fase-list-no{flex:none;width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:var(--char);color:#f3ede0;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;}
+.vb-fase-list-temp{font-family:'Space Mono',monospace;font-weight:700;font-size:14px;}
+.vb-fase-list-pit{font-family:'Space Mono',monospace;font-weight:700;font-size:11px;color:#fff;border-radius:6px;padding:3px 7px;white-space:nowrap;}
+.vb-fase-list-desc{color:var(--muted);font-size:14px;}
+.vb-calc{display:flex;align-items:center;gap:9px;font-size:14px;color:var(--muted);margin-bottom:10px;}
+.vb-calc input{width:70px;font-family:'Inter',sans-serif;font-size:15px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 10px;outline:none;text-align:right;}
+.vb-specs{margin:0 0 6px;border-top:1px solid var(--line);}
+.vb-spec{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--line);}
+.vb-spec dt{display:flex;align-items:center;gap:8px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:13px;}
+.vb-spec dd{margin:0;font-weight:500;text-align:right;}
+.vb-coal{width:13px;height:13px;border-radius:3px;display:inline-block;background:linear-gradient(135deg,#3a322a,#15110d);}
+.vb-del-link{display:flex;align-items:center;gap:7px;margin:22px auto 0;background:none;border:none;color:#9a3a26;font-size:13px;cursor:pointer;font-family:'Inter',sans-serif;}
+.vb-del-confirm{margin-top:22px;background:#fbf0ec;border:1px solid #e7c4b8;border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.vb-del-confirm span{font-size:14px;}
+.vb-del-confirm>div{display:flex;gap:9px;}
+.vb-del-confirm .vb-btn{padding:9px 14px;font-size:13px;}
+.vb-set-status{background:#fff;border:1px solid var(--line);border-radius:11px;padding:13px 15px;font-size:13px;line-height:1.5;color:var(--muted);margin-bottom:18px;}
+.vb-set-status b{color:var(--ink);}
+.vb-set-note{font-size:12px;color:var(--muted);line-height:1.5;margin-top:14px;}
+.vb-spin svg{animation:vbspin 1s linear infinite;}
+@keyframes vbspin{to{transform:rotate(360deg);}}
+.vb-sync-field{display:flex;gap:8px;margin:10px 0 12px;}
+.vb-sync-field input{flex:1;min-width:0;font-family:'Inter',sans-serif;font-size:14px;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 12px;outline:none;}
+@media (prefers-reduced-motion:reduce){.vb-card{transition:none;}}
+@media (max-width:380px){.vb-card-stats{gap:12px;}.vb-gauge-val{font-size:28px;}.vb-fase-desc{font-size:13px;}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+"use strict";
+(function(){
+
+/* ===================== helpers ===================== */
+function el(tag, props){
+  var n = document.createElement(tag), i, k, v;
+  if(props){
+    for(k in props){ v = props[k];
+      if(k==="class") n.className=v;
+      else if(k==="html") n.innerHTML=v;
+      else if(k.slice(0,2)==="on" && typeof v==="function") n.addEventListener(k.slice(2).toLowerCase(), v);
+      else if(k==="style" && typeof v==="object") Object.assign(n.style, v);
+      else if(v===true) n.setAttribute(k,"");
+      else if(v!==false && v!=null) n.setAttribute(k, v);
+    }
+  }
+  for(i=2;i<arguments.length;i++) append(n, arguments[i]);
+  return n;
+}
+function append(n, kid){
+  if(kid==null || kid===false) return;
+  if(Array.isArray(kid)){ kid.forEach(function(k){append(n,k);}); return; }
+  n.appendChild(typeof kid==="object" ? kid : document.createTextNode(String(kid)));
+}
+function raw(htmlStr){ var s=document.createElement("span"); s.style.display="contents"; s.innerHTML=htmlStr; return s; }
+function clear(n){ while(n.firstChild) n.removeChild(n.firstChild); }
+var uid = function(){ return "x"+Math.random().toString(36).slice(2,9)+Date.now().toString(36); };
+
+/* ===================== iconen ===================== */
+var IC = {
+  flame:"<path d='M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3z'/>",
+  plus:"<path d='M5 12h14'/><path d='M12 5v14'/>",
+  arrowLeft:"<path d='m12 19-7-7 7-7'/><path d='M19 12H5'/>",
+  search:"<circle cx='11' cy='11' r='8'/><path d='m21 21-4.3-4.3'/>",
+  pencil:"<path d='M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z'/><path d='m15 5 4 4'/>",
+  trash:"<path d='M3 6h18'/><path d='M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6'/><path d='M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2'/>",
+  copy:"<rect width='14' height='14' x='8' y='8' rx='2'/><path d='M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2'/>",
+  save:"<path d='M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z'/><path d='M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7'/><path d='M7 3v4a1 1 0 0 0 1 1h7'/>",
+  x:"<path d='M18 6 6 18'/><path d='m6 6 12 12'/>",
+  thermometer:"<path d='M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z'/>",
+  timer:"<line x1='10' x2='14' y1='2' y2='2'/><line x1='12' x2='15' y1='14' y2='11'/><circle cx='12' cy='14' r='8'/>",
+  clock:"<circle cx='12' cy='12' r='10'/><polyline points='12 6 12 12 16 14'/>",
+  trees:"<path d='M10 10v.2A3 3 0 0 1 8.9 16H5a3 3 0 0 1-1-5.8V10a3 3 0 0 1 6 0Z'/><path d='M7 16v6'/><path d='M13 19v3'/><path d='M12 19h8.3a1 1 0 0 0 .7-1.7L18 14h.3a1 1 0 0 0 .7-1.7L16 9h.2a1 1 0 0 0 .8-1.7L13 3l-1.4 1.5'/>",
+  scale:"<path d='m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z'/><path d='m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z'/><path d='M7 21h10'/><path d='M12 3v18'/><path d='M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2'/>",
+  users:"<path d='M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2'/><circle cx='9' cy='7' r='4'/><path d='M22 21v-2a4 4 0 0 0-3-3.87'/><path d='M16 3.13a4 4 0 0 1 0 7.75'/>",
+  calendar:"<path d='M8 2v4'/><path d='M16 2v4'/><rect width='18' height='18' x='3' y='4' rx='2'/><path d='M3 10h18'/>",
+  flask:"<path d='M14 2v6l3.7 7.4A2 2 0 0 1 16 18H8a2 2 0 0 1-1.7-2.6L10 8V2'/><path d='M6.2 2h11.6'/><path d='M6 18h12'/>",
+  calculator:"<rect width='16' height='20' x='4' y='2' rx='2'/><line x1='8' x2='16' y1='6' y2='6'/><line x1='8' x2='8' y1='14' y2='14'/><line x1='12' x2='12' y1='14' y2='14'/><line x1='16' x2='16' y1='14' y2='14'/><line x1='8' x2='8' y1='18' y2='18'/><line x1='12' x2='12' y1='18' y2='18'/><line x1='16' x2='16' y1='18' y2='18'/>",
+  settings:"<path d='M12.2 2h-.4a2 2 0 0 0-2 2v.2a2 2 0 0 1-1 1.7l-.4.3a2 2 0 0 1-2 0l-.2-.1a2 2 0 0 0-2.7.7l-.2.4a2 2 0 0 0 .7 2.7l.2.1a2 2 0 0 1 1 1.7v.5a2 2 0 0 1-1 1.7l-.2.1a2 2 0 0 0-.7 2.7l.2.4a2 2 0 0 0 2.7.7l.2-.1a2 2 0 0 1 2 0l.4.3a2 2 0 0 1 1 1.7V20a2 2 0 0 0 2 2h.4a2 2 0 0 0 2-2v-.2a2 2 0 0 1 1-1.7l.4-.3a2 2 0 0 1 2 0l.2.1a2 2 0 0 0 2.7-.7l.2-.4a2 2 0 0 0-.7-2.7l-.2-.1a2 2 0 0 1-1-1.7v-.5a2 2 0 0 1 1-1.7l.2-.1a2 2 0 0 0 .7-2.7l-.2-.4a2 2 0 0 0-2.7-.7l-.2.1a2 2 0 0 1-2 0l-.4-.3a2 2 0 0 1-1-1.7V4a2 2 0 0 0-2-2z'/><circle cx='12' cy='12' r='3'/>",
+  download:"<path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/><polyline points='7 10 12 15 17 10'/><line x1='12' x2='12' y1='15' y2='3'/>",
+  upload:"<path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/><polyline points='17 8 12 3 7 8'/><line x1='12' x2='12' y1='3' y2='15'/>",
+  refresh:"<path d='M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8'/><path d='M21 3v5h-5'/><path d='M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16'/><path d='M3 21v-5h5'/>"
+};
+function ic(name, size, fill){
+  size = size||24; fill = fill||"none";
+  return "<svg width='"+size+"' height='"+size+"' viewBox='0 0 24 24' fill='"+fill+"' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'>"+IC[name]+"</svg>";
+}
+
+/* ===================== opslag ===================== */
+var KEY_RECEPTEN="vuurboek:recepten", KEY_RUBS="vuurboek:rubs", KEY_SYNC="vuurboek:sync", KEY_DELETED="vuurboek:deleted";
+var storageOK = (function(){ try{ localStorage.setItem("__vb_t","1"); localStorage.removeItem("__vb_t"); return true; }catch(e){ return false; } })();
+function load(key){ if(!storageOK) return null; try{ var v=localStorage.getItem(key); return v?JSON.parse(v):[]; }catch(e){ return []; } }
+function persist(key, list){ if(!storageOK) return; try{ localStorage.setItem(key, JSON.stringify(list)); }catch(e){} }
+function loadObj(key){ if(!storageOK) return {}; try{ var v=localStorage.getItem(key); var o=v?JSON.parse(v):{}; return (o&&typeof o==="object"&&!Array.isArray(o))?o:{}; }catch(e){ return {}; } }
+var SY=Object.assign({token:"",gistId:"",lastSync:0,dirty:false}, loadObj(KEY_SYNC)); SY.busy=false; SY.error=""; SY.queued=false;
+var TOMB=loadObj(KEY_DELETED);
+function persistSync(){ persist(KEY_SYNC,{token:SY.token,gistId:SY.gistId,lastSync:SY.lastSync,dirty:SY.dirty}); }
+function persistTomb(){ persist(KEY_DELETED,TOMB); }
+
+/* ===================== reken-helpers ===================== */
+var HEAT_STOPS=[[90,[62,110,142]],[130,[78,138,107]],[180,[224,147,26]],[250,[216,99,26]],[350,[192,46,18]]];
+function rgb(a){return "rgb("+a[0]+","+a[1]+","+a[2]+")";}
+function heatColor(t){ var v=Number(t); if(!v||isNaN(v)) return "#9a8c78";
+  if(v<=HEAT_STOPS[0][0]) return rgb(HEAT_STOPS[0][1]);
+  if(v>=HEAT_STOPS[4][0]) return rgb(HEAT_STOPS[4][1]);
+  for(var i=0;i<4;i++){ var t0=HEAT_STOPS[i][0],c0=HEAT_STOPS[i][1],t1=HEAT_STOPS[i+1][0],c1=HEAT_STOPS[i+1][1];
+    if(v>=t0&&v<=t1){ var f=(v-t0)/(t1-t0); return rgb([Math.round(c0[0]+(c1[0]-c0[0])*f),Math.round(c0[1]+(c1[1]-c0[1])*f),Math.round(c0[2]+(c1[2]-c0[2])*f)]); } }
+  return "#9a8c78";
+}
+function heatLabel(t){ var v=Number(t); if(!v||isNaN(v)) return ""; if(v<130) return "Low & slow"; if(v<200) return "Indirect garen"; if(v<270) return "Grillen"; return "Searen / pizza"; }
+function toGrams(val,eu){ var n=Number(val); if(!n||isNaN(n)) return 0; return eu==="kg"? n*1000 : n; }
+function fmtAmount(v){ if(v==null||isNaN(v)) return ""; var r; if(v>=10) r=Math.round(v); else if(v>=1) r=Math.round(v*10)/10; else r=Math.round(v*100)/100; return r.toLocaleString("nl-NL",{maximumFractionDigits:2}); }
+function formatDate(iso){ try{ return new Date(iso+"T00:00:00").toLocaleDateString("nl-NL",{day:"numeric",month:"long",year:"numeric"}); }catch(e){ return iso; } }
+function finalKern(fases){ var f=(fases||[]).filter(function(p){return p.temp;}); return f.length? Number(f[f.length-1].temp) : null; }
+function effPit(r){ if(r.pitTemp) return r.pitTemp; var f=(r.kernFases||[]).filter(function(p){return p.pit;})[0]; return f? f.pit : ""; }
+function byDate(a,b){ return (b.datum||"").localeCompare(a.datum||""); }
+function byName(a,b){ return a.naam.localeCompare(b.naam); }
+
+/* ===================== migratie ===================== */
+function migrateRecipe(r){ var m=Object.assign({},r);
+  if(typeof m.gewicht==="string"){ var s=m.gewicht.toLowerCase(); var num=parseFloat(s.replace(",",".").replace(/[^0-9.]/g,"")); m.gewicht=isNaN(num)?"":num; m.gewichtEenheid=/(^|[^k])g(ram)?\b/.test(s)?"g":"kg"; }
+  if(m.gewichtEenheid==null) m.gewichtEenheid="kg";
+  if(!Array.isArray(m.kernFases)){ m.kernFases = m.kernTemp ? [{id:uid(),temp:Number(m.kernTemp),pit:"",beschrijving:""}] : []; }
+  m.kernFases = m.kernFases.map(function(p){ return Object.assign({pit:""}, p); });
+  if(m.rubRef==null) m.rubRef = m.rubMarinade ? "__custom__" : "";
+  if(m.beoordeling==null) m.beoordeling=0;
+  if(m.updatedAt==null) m.updatedAt=m.createdAt||0;
+  return m;
+}
+
+/* ===================== blanks ===================== */
+function blankRecipe(){ return {id:null,naam:"",datum:new Date().toISOString().slice(0,10),soortVlees:"",gewicht:"",gewichtEenheid:"kg",porties:"",rubRef:"",rubMarinade:"",methode:"Indirect",pitTemp:"",kernFases:[{id:uid(),temp:"",pit:"",beschrijving:""}],gaartijd:"",rusttijd:"",houtskool:"",rookhout:"",beoordeling:0,notities:""}; }
+function blankRub(){ return {id:null,naam:"",type:"Rub",refGewicht:"",refEenheid:"kg",ingredienten:[{id:uid(),naam:"",hoeveelheid:"",eenheid:"g"}],notities:""}; }
+var CATEGORIEEN=["Rund","Varken","Gevogelte","Wild","Vis","Schaal- & schelpdieren","Groente / vegetarisch"];
+var EENHEDEN=["g","ml","el","tl","stuks","teen","snufje","kop"];
+
+/* ===================== state ===================== */
+var S = {
+  screen:"cooks", prevTab:"cooks",
+  recepten:(load(KEY_RECEPTEN)||[]).map(migrateRecipe).sort(byDate),
+  rubs:(load(KEY_RUBS)||[]).sort(byName),
+  draft:blankRecipe(), rubDraft:blankRub(),
+  selCook:null, selRub:null, query:"", catFilter:""
+};
+var ROOT = document.getElementById("root");
+
+function saveRecepten(){ S.recepten.sort(byDate); persist(KEY_RECEPTEN, S.recepten); }
+function saveRubs(){ S.rubs.sort(byName); persist(KEY_RUBS, S.rubs); }
+function go(screen){ S.query=""; S.catFilter=""; S.screen=screen; render(); }
+
+/* ===================== gedeelde bouwers ===================== */
+function iconBtn(name, label, onClick){ return el("button",{class:"vb-icon-btn","aria-label":label,onClick:onClick}, raw(ic(name,name==="plus"?22:20))); }
+function btn(cls, iconName, text, onClick, disabled){ var b=el("button",{class:cls,onClick:onClick}); if(disabled) b.disabled=true; if(iconName) b.appendChild(raw(ic(iconName,16))); if(text) b.appendChild(document.createTextNode(" "+text)); return b; }
+function field(label, control, req){ var l=el("label",{class:"vb-field"}); var sp=el("span",{class:"vb-field-lbl"},label); if(req) sp.appendChild(el("i",{class:"vb-req"},"*")); l.appendChild(sp); l.appendChild(control); return l; }
+function segmented(label, value, options, onChange){
+  var wrap=el("div",{class:"vb-field"}, el("span",{class:"vb-field-lbl"},label));
+  var seg=el("div",{class:"vb-seg",role:"group"});
+  options.forEach(function(o){ seg.appendChild(el("button",{type:"button",class:"vb-seg-btn"+(o===value?" is-on":""),onClick:function(){
+    onChange(o);
+    Array.prototype.forEach.call(seg.children,function(c){ c.className="vb-seg-btn"+(c.textContent===o?" is-on":""); });
+  }},o)); });
+  wrap.appendChild(seg); return wrap;
+}
+function flames(value, editable, small, onChange){
+  var wrap=el("div",{class:"vb-flames"+(small?" sm":"")});
+  for(var n=1;n<=5;n++){ (function(n){
+    var b=el("button",{type:"button",class:"vb-flame"+(n<=value?" on":""),style:{cursor:editable?"pointer":"default"},"aria-label":n+" van 5"}, raw(ic("flame",small?14:22,n<=value?"currentColor":"none")));
+    if(editable) b.addEventListener("click",function(){ var nv = (n===value)? n-1 : n; onChange(nv); });
+    else b.disabled=true;
+    wrap.appendChild(b);
+  })(n); }
+  return wrap;
+}
+function stat(iconName, value, label){ return el("span",{class:"vb-stat"}, el("span",{class:"vb-stat-ic"},raw(ic(iconName,13))), el("span",{class:"vb-stat-val"},value), el("span",{class:"vb-stat-lbl"},label)); }
+function gauge(label, value, color, sub){ var g=el("div",{class:"vb-gauge"}, el("span",{class:"vb-gauge-lbl"},label)); var val=el("span",{class:"vb-gauge-val",style:{color:color}}, value? String(value) : "—"); val.appendChild(el("i",{}, value? "°C" : "")); g.appendChild(val); if(sub) g.appendChild(el("span",{class:"vb-gauge-sub"},sub)); return g; }
+function block(title, body){ var s=el("section",{class:"vb-block"}); var h=el("h3",{class:"vb-block-title"}); if(typeof title==="string") h.textContent=title; else h.appendChild(title); s.appendChild(h); append(s,body); return s; }
+function scaledIngredients(rub, weightG, hideMeta){
+  var refG=toGrams(rub.refGewicht,rub.refEenheid); var scalable=weightG>0&&refG>0; var factor=scalable?weightG/refG:1;
+  var wrap=el("div",{class:"vb-ing-list"});
+  if(!hideMeta) wrap.appendChild(el("p",{class:"vb-ing-meta"}, scalable? "Geschaald naar "+fmtAmount(weightG/1000)+" kg vlees" : "Basis voor "+fmtAmount(rub.refGewicht)+" "+rub.refEenheid+" vlees"));
+  var ul=el("ul",{class:"vb-ing-list-view"});
+  (rub.ingredienten||[]).filter(function(i){return i.naam;}).forEach(function(i){ ul.appendChild(el("li",{}, el("span",{},i.naam), el("span",{class:"vb-ing-amt"}, fmtAmount(Number(i.hoeveelheid)*factor)+" "+i.eenheid))); });
+  wrap.appendChild(ul); return wrap;
+}
+
+/* ===================== header + tabs ===================== */
+function header(){
+  var inner=el("div",{class:"vb-top-inner"});
+  var showBack = S.screen.indexOf("-")>-1 || S.screen==="settings";
+  if(showBack) inner.appendChild(iconBtn("arrowLeft","Terug",function(){ S.screen = (S.screen==="settings") ? S.prevTab : (S.screen.indexOf("rub")>-1?"rubs":"cooks"); render(); }));
+  else inner.appendChild(el("span",{class:"vb-brandmark"},raw(ic("flame",20))));
+  inner.appendChild(el("div",{class:"vb-brand"}, el("span",{class:"vb-brand-name"},"VUURBOEK"), el("span",{class:"vb-brand-sub"},"kamado kooklogboek")));
+  if(S.screen==="cooks"||S.screen==="rubs"){
+    if(SY.token){ var sb=iconBtn("refresh","Nu synchroniseren",function(){ syncNow(true); }); sb.id="vb-sync-btn"; if(SY.busy) sb.classList.add("vb-spin"); inner.appendChild(sb); }
+    inner.appendChild(iconBtn("settings","Instellingen",function(){ S.prevTab=S.screen; S.screen="settings"; render(); }));
+    inner.appendChild(iconBtn("plus","Toevoegen",headerAdd));
+  }
+  return el("header",{class:"vb-top"}, inner);
+}
+function tabs(){
+  var tab = S.screen.indexOf("rub")>-1 ? "rubs" : "cooks";
+  var nav=el("nav",{class:"vb-tabs"});
+  var t1=el("button",{class:"vb-tab"+(S.screen!=="settings"&&tab==="cooks"?" on":""),onClick:function(){go("cooks");}}, raw(ic("flame",20)), el("span",{},"Cooks"));
+  var t2=el("button",{class:"vb-tab"+(S.screen!=="settings"&&tab==="rubs"?" on":""),onClick:function(){go("rubs");}}, raw(ic("flask",20)), el("span",{},"Rubs"));
+  nav.appendChild(t1); nav.appendChild(t2); return nav;
+}
+function headerAdd(){ if(S.screen==="cooks"){ S.draft=blankRecipe(); S.screen="cook-form"; render(); } else if(S.screen==="rubs"){ S.rubDraft=blankRub(); S.screen="rub-form"; render(); } }
+
+/* ===================== COOK-LIJST ===================== */
+function cookList(){
+  var wrap=el("div");
+  if(!storageOK) wrap.appendChild(el("div",{class:"vb-banner",html:"<b>Let op:</b> automatisch opslaan werkt niet als je dit bestand rechtstreeks opent. Gebruik het tandwiel ▸ <b>Exporteer</b> om je gegevens te bewaren. Zie het bericht voor de beste manier om de app te openen."}));
+  var results=el("div");
+  function draw(){
+    clear(results);
+    var q=S.query.trim().toLowerCase();
+    var list = S.recepten.filter(function(r){
+      if(S.catFilter && r.soortVlees!==S.catFilter) return false;
+      if(q && [r.naam,r.soortVlees,r.houtskool,r.rookhout].filter(Boolean).join(" ").toLowerCase().indexOf(q)===-1) return false;
+      return true;
+    });
+    if(S.recepten.length===0){ results.appendChild(emptyState("flame","Nog geen cooks gelogd","Leg je eerste vuur vast — vlees, rub, temperatuur en hoe het uitpakte.","Eerste cook toevoegen",headerAdd)); return; }
+    if(list.length===0){ results.appendChild(el("p",{class:"vb-muted vb-center"}, q ? 'Niets gevonden voor "'+S.query+'".' : "Geen cooks in deze categorie.")); return; }
+    var ul=el("ul",{class:"vb-cards"});
+    list.forEach(function(r){ var fk=finalKern(r.kernFases); var ep=effPit(r);
+      var card=el("button",{class:"vb-card",onClick:function(){ S.selCook=r.id; S.screen="cook-detail"; render(); }});
+      card.appendChild(el("span",{class:"vb-card-heat",style:{background:heatColor(ep)}}));
+      var body=el("div",{class:"vb-card-body"});
+      body.appendChild(el("div",{class:"vb-card-head"}, el("h3",{},r.naam), flames(r.beoordeling,false,true)));
+      body.appendChild(el("p",{class:"vb-card-meat"}, r.soortVlees + (r.gewicht? " · "+fmtAmount(r.gewicht)+" "+r.gewichtEenheid : "")));
+      body.appendChild(el("div",{class:"vb-card-stats"}, stat("thermometer", ep?ep+"°":"—","pit"), stat("flame", fk?fk+"°":"—","kern"), stat("clock", r.gaartijd||"—","gaartijd")));
+      card.appendChild(body); ul.appendChild(el("li",{},card));
+    });
+    results.appendChild(ul);
+  }
+  function distinctCats(){
+    var seen={}, order=[];
+    S.recepten.forEach(function(r){ if(r.soortVlees && !seen[r.soortVlees]){ seen[r.soortVlees]=1; order.push(r.soortVlees); } });
+    order.sort(function(a,b){ var ia=CATEGORIEEN.indexOf(a), ib=CATEGORIEEN.indexOf(b); if(ia===-1&&ib===-1) return a.localeCompare(b); if(ia===-1) return 1; if(ib===-1) return -1; return ia-ib; });
+    return order;
+  }
+  function buildFilters(){
+    var cats=distinctCats();
+    if(S.catFilter && cats.indexOf(S.catFilter)===-1) S.catFilter="";
+    if(cats.length<2) return null;
+    var bar=el("div",{class:"vb-filters"});
+    function chip(label,val){ var b=el("button",{class:"vb-chip"+(S.catFilter===val?" on":"")}); b.textContent=label; b.addEventListener("click",function(){ S.catFilter=val; Array.prototype.forEach.call(bar.children,function(c){ c.classList.remove("on"); }); b.classList.add("on"); draw(); }); return b; }
+    bar.appendChild(chip("Alle",""));
+    cats.forEach(function(c){ bar.appendChild(chip(c,c)); });
+    return bar;
+  }
+  if(S.recepten.length>0){ wrap.appendChild(searchBar("Zoek op naam, houtskool…", draw)); var fb=buildFilters(); if(fb) wrap.appendChild(fb); }
+  wrap.appendChild(results); draw();
+  return wrap;
+}
+
+/* ===================== RUB-LIJST ===================== */
+function rubList(){
+  var wrap=el("div");
+  if(!storageOK) wrap.appendChild(el("div",{class:"vb-banner",html:"<b>Let op:</b> automatisch opslaan werkt niet als je dit bestand rechtstreeks opent. Gebruik het tandwiel ▸ <b>Exporteer</b> om je gegevens te bewaren."}));
+  var results=el("div");
+  function draw(){
+    clear(results);
+    var q=S.query.trim().toLowerCase();
+    var list = !q ? S.rubs : S.rubs.filter(function(r){ return [r.naam,r.type].concat((r.ingredienten||[]).map(function(i){return i.naam;})).filter(Boolean).join(" ").toLowerCase().indexOf(q)>-1; });
+    if(S.rubs.length===0){ results.appendChild(emptyState("flask","Nog geen rubs of marinades","Maak je eigen rub of marinade aan met ingrediënten en het referentiegewicht vlees. In een cook schalen de hoeveelheden dan automatisch mee.","Rub of marinade toevoegen",headerAdd)); return; }
+    if(list.length===0){ results.appendChild(el("p",{class:"vb-muted vb-center"},'Niets gevonden voor "'+S.query+'".')); return; }
+    var ul=el("ul",{class:"vb-cards"});
+    list.forEach(function(r){
+      var card=el("button",{class:"vb-card vb-card-rub",onClick:function(){ S.selRub=r.id; S.screen="rub-detail"; render(); }});
+      card.appendChild(el("span",{class:"vb-rub-tag"},r.type));
+      var body=el("div",{class:"vb-card-body"});
+      body.appendChild(el("div",{class:"vb-card-head"}, el("h3",{},r.naam)));
+      var cnt=(r.ingredienten||[]).filter(function(i){return i.naam;}).length;
+      body.appendChild(el("p",{class:"vb-card-meat"}, cnt+" ingrediënten · voor "+fmtAmount(r.refGewicht)+" "+r.refEenheid+" vlees"));
+      card.appendChild(body); ul.appendChild(el("li",{},card));
+    });
+    results.appendChild(ul);
+  }
+  if(S.rubs.length>0) wrap.appendChild(searchBar("Zoek op naam of ingrediënt…", draw));
+  wrap.appendChild(results); draw();
+  return wrap;
+}
+
+function searchBar(placeholder, onChange){
+  var input=el("input",{value:S.query,placeholder:placeholder});
+  var clearBtn=el("button",{class:"vb-clear","aria-label":"Wissen",style:{display:S.query?"grid":"none"},onClick:function(){ S.query=""; input.value=""; clearBtn.style.display="none"; onChange(); input.focus(); }}, raw(ic("x",15)));
+  input.addEventListener("input",function(){ S.query=input.value; clearBtn.style.display=input.value?"grid":"none"; onChange(); });
+  return el("div",{class:"vb-search"}, raw(ic("search",16)), input, clearBtn);
+}
+function emptyState(iconName,title,text,btnText,onClick){
+  return el("div",{class:"vb-empty"}, el("span",{class:"vb-empty-flame"},raw(ic(iconName,iconName==="flask"?28:30))), el("h2",{},title), el("p",{},text), btn("vb-btn vb-btn-primary","plus",btnText,onClick));
+}
+
+/* ===================== COOK-FORMULIER ===================== */
+function cookForm(){
+  var d=S.draft;
+  var form=el("div",{class:"vb-form"});
+  form.appendChild(el("h2",{class:"vb-form-title"}, d.id?"Cook bewerken":"Nieuwe cook"));
+
+  var naam=el("input",{value:d.naam,placeholder:"bijv. Lage-en-trage brisket"}); naam.addEventListener("input",function(){ d.naam=naam.value; checkValid(); });
+  form.appendChild(field("Naam van de cook",naam,true));
+
+  var datum=el("input",{type:"date",value:d.datum}); datum.addEventListener("input",function(){ d.datum=datum.value; });
+  var porties=el("input",{type:"number",min:"0",value:d.porties,placeholder:"bijv. 6"}); porties.addEventListener("input",function(){ d.porties=porties.value; });
+  form.appendChild(el("div",{class:"vb-row"}, field("Datum",datum), field("Porties",porties)));
+
+  var cat=el("select");
+  cat.appendChild(el("option",{value:"",disabled:true},"— Kies categorie —"));
+  CATEGORIEEN.forEach(function(c){ cat.appendChild(el("option",{value:c},c)); });
+  if(d.soortVlees && CATEGORIEEN.indexOf(d.soortVlees)===-1){ cat.appendChild(el("option",{value:d.soortVlees},d.soortVlees+" (oud)")); }
+  cat.value=d.soortVlees||"";
+  cat.addEventListener("change",function(){ d.soortVlees=cat.value; checkValid(); });
+  form.appendChild(field("Categorie",cat,true));
+
+  var gw=el("input",{type:"number",min:"0",step:"0.1",value:d.gewicht,placeholder:"bijv. 5,5"});
+  var gwe=el("select"); ["kg","g"].forEach(function(u){ gwe.appendChild(el("option",{value:u,selected:d.gewichtEenheid===u},u)); });
+  gw.addEventListener("input",function(){ d.gewicht=gw.value; updatePreview(); });
+  gwe.addEventListener("change",function(){ d.gewichtEenheid=gwe.value; updatePreview(); });
+  form.appendChild(field("Gewicht vlees", el("div",{class:"vb-amt"}, gw, gwe)));
+
+  // rub keuze
+  var sel=el("select");
+  sel.appendChild(el("option",{value:""},"Geen"));
+  var rubsRub=S.rubs.filter(function(r){return r.type==="Rub";});
+  var rubsMar=S.rubs.filter(function(r){return r.type==="Marinade";});
+  if(rubsRub.length){ var g1=el("optgroup",{label:"Rubs"}); rubsRub.forEach(function(r){ g1.appendChild(el("option",{value:r.id,selected:d.rubRef===r.id},r.naam)); }); sel.appendChild(g1); }
+  if(rubsMar.length){ var g2=el("optgroup",{label:"Marinades"}); rubsMar.forEach(function(r){ g2.appendChild(el("option",{value:r.id,selected:d.rubRef===r.id},r.naam)); }); sel.appendChild(g2); }
+  sel.appendChild(el("option",{value:"__custom__",selected:d.rubRef==="__custom__"},"Eigen omschrijving…"));
+  sel.value=d.rubRef;
+  sel.addEventListener("change",function(){ d.rubRef=sel.value; updatePreview(); });
+  form.appendChild(field("Rub of marinade",sel));
+
+  var smaakBox=el("div"); form.appendChild(smaakBox);
+  function updatePreview(){
+    clear(smaakBox);
+    if(S.rubs.length===0 && d.rubRef!=="__custom__"){ smaakBox.appendChild(el("p",{class:"vb-hint vb-soft"},"Nog geen rubs aangemaakt — voeg ze toe in het tabblad Rubs.")); }
+    var chosen=S.rubs.filter(function(r){return r.id===d.rubRef;})[0];
+    if(chosen){ var wG=toGrams(d.gewicht,d.gewichtEenheid); var pv=el("div",{class:"vb-preview"}, scaledIngredients(chosen,wG)); if(!wG) pv.appendChild(el("p",{class:"vb-ing-note"},"Vul het vleesgewicht in om de hoeveelheden te schalen.")); smaakBox.appendChild(pv); }
+    if(d.rubRef==="__custom__"){ var ta=el("textarea",{rows:"2",placeholder:"bijv. zwarte peper, zeezout, knoflook, paprika"}); ta.value=d.rubMarinade; ta.addEventListener("input",function(){ d.rubMarinade=ta.value; }); smaakBox.appendChild(field("Eigen rub / marinade",ta)); }
+  }
+  updatePreview();
+
+  form.appendChild(segmented("Methode",d.methode,["Direct","Indirect"],function(v){ d.methode=v; }));
+
+  var pit=el("input",{type:"number",value:d.pitTemp,placeholder:"bijv. 110"});
+  var heatBox=el("div");
+  function updateHeat(){ clear(heatBox); if(d.pitTemp){ heatBox.appendChild(el("div",{class:"vb-heatbar"}, el("span",{class:"vb-heatbar-fill",style:{background:heatColor(d.pitTemp)}}), el("span",{class:"vb-heatbar-lbl"},heatLabel(d.pitTemp)))); } }
+  pit.addEventListener("input",function(){ d.pitTemp=pit.value; updateHeat(); });
+  form.appendChild(field("Pit-temperatuur (°C)",pit)); form.appendChild(heatBox); updateHeat();
+
+  // kernfases
+  var fasesWrap=el("div",{class:"vb-group"}, el("span",{class:"vb-field-lbl"},"Kerntemperatuur — fases"));
+  var fasesBox=el("div",{class:"vb-fases"}); fasesWrap.appendChild(fasesBox);
+  function drawFases(){
+    clear(fasesBox);
+    d.kernFases.forEach(function(p,i){
+      var row=el("div",{class:"vb-fase"});
+      var top=el("div",{class:"vb-fase-top"});
+      top.appendChild(el("span",{class:"vb-fase-no"},String(i+1)));
+      var tIn=el("input",{type:"number",value:p.temp,placeholder:"70"}); tIn.addEventListener("input",function(){ p.temp=tIn.value; });
+      top.appendChild(el("div",{class:"vb-fase-temp"}, el("span",{class:"vb-fase-tag"},"kern tot"), tIn, el("span",{class:"vb-fase-deg"},"°C")));
+      var pIn=el("input",{type:"number",value:p.pit,placeholder:"125"}); pIn.addEventListener("input",function(){ p.pit=pIn.value; });
+      top.appendChild(el("div",{class:"vb-fase-temp"}, el("span",{class:"vb-fase-tag"},"pit"), pIn, el("span",{class:"vb-fase-deg"},"°C")));
+      if(d.kernFases.length>1){ top.appendChild(el("button",{type:"button",class:"vb-row-del","aria-label":"Fase weg",onClick:function(){ d.kernFases=d.kernFases.filter(function(x){return x!==p;}); drawFases(); }}, raw(ic("x",15)))); }
+      row.appendChild(top);
+      var dIn=el("input",{class:"vb-fase-desc",value:p.beschrijving,placeholder:i===0?"bijv. kaal op de bbq":"bijv. ingepakt in butcher paper"}); dIn.addEventListener("input",function(){ p.beschrijving=dIn.value; });
+      row.appendChild(dIn);
+      fasesBox.appendChild(row);
+    });
+  }
+  drawFases();
+  fasesWrap.appendChild(el("button",{type:"button",class:"vb-add-row",onClick:function(){ d.kernFases.push({id:uid(),temp:"",pit:"",beschrijving:""}); drawFases(); }}, raw(ic("plus",15)), " Fase toevoegen"));
+  fasesWrap.appendChild(el("p",{class:"vb-hint vb-soft",style:{marginTop:"4px"}},"Pit per fase is optioneel — laat leeg om de algemene pit-temperatuur hierboven te gebruiken."));
+  form.appendChild(fasesWrap);
+
+  var gaar=el("input",{value:d.gaartijd,placeholder:"bijv. 12 uur"}); gaar.addEventListener("input",function(){ d.gaartijd=gaar.value; });
+  var rust=el("input",{value:d.rusttijd,placeholder:"bijv. 1 uur"}); rust.addEventListener("input",function(){ d.rusttijd=rust.value; });
+  form.appendChild(el("div",{class:"vb-row"}, field("Gaartijd",gaar), field("Rusttijd",rust)));
+
+  var hk=el("input",{value:d.houtskool,placeholder:"bijv. Bastard restaurant briketten"}); hk.addEventListener("input",function(){ d.houtskool=hk.value; });
+  form.appendChild(field("Gebruikte houtskool",hk));
+  var rh=el("input",{value:d.rookhout,placeholder:"bijv. eik / hickory chunks"}); rh.addEventListener("input",function(){ d.rookhout=rh.value; });
+  form.appendChild(field("Rookhout (optioneel)",rh));
+
+  var flBox=el("div"); function drawFl(){ clear(flBox); flBox.appendChild(flames(d.beoordeling,true,false,function(v){ d.beoordeling=v; drawFl(); })); }
+  drawFl(); form.appendChild(field("Beoordeling",flBox));
+
+  var notes=el("textarea",{rows:"4",placeholder:"Wat ging goed, wat de volgende keer anders — wrappen, spritzen, vuurbeheer…"}); notes.value=d.notities; notes.addEventListener("input",function(){ d.notities=notes.value; });
+  form.appendChild(field("Notities & volgende keer",notes));
+
+  var hint=el("p",{class:"vb-hint",style:{display:"none"}},"Naam en soort vlees zijn nodig om op te slaan."); form.appendChild(hint);
+  var saveBtn=btn("vb-btn vb-btn-primary","save","Opslaan",saveCook);
+  function checkValid(){ var ok=d.naam.trim()&&d.soortVlees.trim(); saveBtn.disabled=!ok; hint.style.display=ok?"none":"block"; }
+  function saveCook(){ if(!(d.naam.trim()&&d.soortVlees.trim())) return; var clean=Object.assign({},d); clean.kernFases=d.kernFases.filter(function(p){return String(p.temp).trim();});
+    clean.updatedAt=Date.now();
+    if(d.id){ S.recepten=S.recepten.map(function(r){return r.id===d.id?clean:r;}); }
+    else { clean.id=uid(); clean.createdAt=Date.now(); S.recepten.unshift(clean); }
+    saveRecepten(); touch(); S.selCook=clean.id; S.screen="cook-detail"; render();
+  }
+  form.appendChild(el("div",{class:"vb-form-actions"}, btn("vb-btn vb-btn-ghost",null,"Annuleren",function(){ S.screen=d.id?"cook-detail":"cooks"; render(); }), saveBtn));
+  checkValid();
+  return form;
+}
+
+/* ===================== RUB-FORMULIER ===================== */
+function rubForm(){
+  var d=S.rubDraft;
+  var form=el("div",{class:"vb-form"});
+  form.appendChild(el("h2",{class:"vb-form-title"}, d.id?"Bewerken":"Nieuwe rub / marinade"));
+
+  var naam=el("input",{value:d.naam,placeholder:"bijv. Pittige koffie-rub"}); naam.addEventListener("input",function(){ d.naam=naam.value; checkValid(); });
+  form.appendChild(field("Naam",naam,true));
+  form.appendChild(segmented("Type",d.type,["Rub","Marinade"],function(v){ d.type=v; }));
+
+  var rg=el("input",{type:"number",min:"0",step:"0.1",value:d.refGewicht,placeholder:"bijv. 2"}); rg.addEventListener("input",function(){ d.refGewicht=rg.value; });
+  var rge=el("select"); ["kg","g"].forEach(function(u){ rge.appendChild(el("option",{value:u,selected:d.refEenheid===u},u)); }); rge.value=d.refEenheid;
+  rge.addEventListener("change",function(){ d.refEenheid=rge.value; });
+  form.appendChild(field("Hoeveelheid geschikt voor … vlees", el("div",{class:"vb-amt"}, rg, rge), true));
+
+  var ingWrap=el("div",{class:"vb-group"}, el("span",{class:"vb-field-lbl"},"Ingrediënten"));
+  var ingBox=el("div",{class:"vb-ings"}); ingWrap.appendChild(ingBox);
+  function drawIngs(){
+    clear(ingBox);
+    d.ingredienten.forEach(function(ing){
+      var row=el("div",{class:"vb-ing-row"});
+      var nm=el("input",{class:"vb-ing-name",value:ing.naam,placeholder:"bijv. paprikapoeder"}); nm.addEventListener("input",function(){ ing.naam=nm.value; checkValid(); });
+      var qt=el("input",{class:"vb-ing-qty",type:"number",min:"0",step:"0.1",value:ing.hoeveelheid,placeholder:"0"}); qt.addEventListener("input",function(){ ing.hoeveelheid=qt.value; });
+      var un=el("select",{class:"vb-ing-unit"}); EENHEDEN.forEach(function(u){ un.appendChild(el("option",{value:u,selected:ing.eenheid===u},u)); }); un.value=ing.eenheid; un.addEventListener("change",function(){ ing.eenheid=un.value; });
+      row.appendChild(nm); row.appendChild(qt); row.appendChild(un);
+      if(d.ingredienten.length>1) row.appendChild(el("button",{type:"button",class:"vb-row-del","aria-label":"Verwijderen",onClick:function(){ d.ingredienten=d.ingredienten.filter(function(x){return x!==ing;}); drawIngs(); checkValid(); }}, raw(ic("x",15))));
+      ingBox.appendChild(row);
+    });
+  }
+  drawIngs();
+  ingWrap.appendChild(el("button",{type:"button",class:"vb-add-row",onClick:function(){ d.ingredienten.push({id:uid(),naam:"",hoeveelheid:"",eenheid:"g"}); drawIngs(); }}, raw(ic("plus",15)), " Ingrediënt toevoegen"));
+  form.appendChild(ingWrap);
+
+  var notes=el("textarea",{rows:"3",placeholder:"bijv. minimaal 2 uur laten intrekken; goed voor varkensvlees"}); notes.value=d.notities; notes.addEventListener("input",function(){ d.notities=notes.value; });
+  form.appendChild(field("Notities (optioneel)",notes));
+
+  var hint=el("p",{class:"vb-hint",style:{display:"none"}},"Vul een naam en minstens één ingrediënt in."); form.appendChild(hint);
+  var saveBtn=btn("vb-btn vb-btn-primary","save","Opslaan",saveRub);
+  function checkValid(){ var ok=d.naam.trim()&&d.ingredienten.some(function(i){return i.naam.trim();}); saveBtn.disabled=!ok; hint.style.display=ok?"none":"block"; }
+  function saveRub(){ var ok=d.naam.trim()&&d.ingredienten.some(function(i){return i.naam.trim();}); if(!ok) return; var clean=Object.assign({},d); clean.ingredienten=d.ingredienten.filter(function(i){return i.naam.trim();});
+    clean.updatedAt=Date.now();
+    if(d.id){ S.rubs=S.rubs.map(function(r){return r.id===d.id?clean:r;}); }
+    else { clean.id=uid(); clean.createdAt=Date.now(); S.rubs.unshift(clean); }
+    saveRubs(); touch(); S.selRub=clean.id; S.screen="rub-detail"; render();
+  }
+  form.appendChild(el("div",{class:"vb-form-actions"}, btn("vb-btn vb-btn-ghost",null,"Annuleren",function(){ S.screen=d.id?"rub-detail":"rubs"; render(); }), saveBtn));
+  checkValid();
+  return form;
+}
+
+/* ===================== COOK-DETAIL ===================== */
+function cookDetail(){
+  var r=S.recepten.filter(function(x){return x.id===S.selCook;})[0];
+  if(!r) return el("p",{class:"vb-muted vb-center"},"Niet gevonden.");
+  var fk=finalKern(r.kernFases); var fases=(r.kernFases||[]).filter(function(p){return p.temp;}); var ep=effPit(r);
+  var linkedRub=S.rubs.filter(function(x){return x.id===r.rubRef;})[0]; var weightG=toGrams(r.gewicht,r.gewichtEenheid);
+  var wrap=el("div",{class:"vb-detail"});
+  wrap.appendChild(el("div",{class:"vb-detail-head"}, el("div",{}, el("h2",{},r.naam), el("p",{class:"vb-detail-meat"},r.soortVlees)), flames(r.beoordeling,false,false)));
+  if(r.datum) wrap.appendChild(el("p",{class:"vb-detail-date"}, raw(ic("calendar",13)), " "+formatDate(r.datum)));
+  wrap.appendChild(el("div",{class:"vb-gauges"}, gauge("Pit",ep,heatColor(ep),heatLabel(ep)), gauge("Kern (doel)",fk,"#1f1a15")));
+
+  if(fases.length){ var ol=el("ol",{class:"vb-fase-list"}); fases.forEach(function(p,i){ var li=el("li",{}, el("span",{class:"vb-fase-list-no"},String(i+1)), el("span",{class:"vb-fase-list-temp"},"tot "+p.temp+" °C")); if(p.pit) li.appendChild(el("span",{class:"vb-fase-list-pit",style:{background:heatColor(p.pit)}},"pit "+p.pit+"°")); if(p.beschrijving) li.appendChild(el("span",{class:"vb-fase-list-desc"},p.beschrijving)); ol.appendChild(li); }); wrap.appendChild(block("Kerntemperatuur — fases",ol)); }
+
+  if(linkedRub){ wrap.appendChild(block(linkedRub.type+" · "+linkedRub.naam, scaledIngredients(linkedRub,weightG))); }
+  else if(r.rubRef==="__custom__"&&r.rubMarinade){ wrap.appendChild(block("Rub / marinade", el("p",{},r.rubMarinade))); }
+
+  var rows=[];
+  if(r.methode) rows.push(["Methode",r.methode,"flame"]);
+  if(r.gaartijd) rows.push(["Gaartijd",r.gaartijd,"clock"]);
+  if(r.rusttijd) rows.push(["Rusttijd",r.rusttijd,"timer"]);
+  if(r.houtskool) rows.push(["Houtskool",r.houtskool,"coal"]);
+  if(r.rookhout) rows.push(["Rookhout",r.rookhout,"trees"]);
+  if(r.porties) rows.push(["Porties",r.porties,"users"]);
+  if(r.gewicht) rows.push(["Gewicht",fmtAmount(r.gewicht)+" "+r.gewichtEenheid,"scale"]);
+  if(rows.length){ var dl=el("dl",{class:"vb-specs"}); rows.forEach(function(row){ var dt=el("dt",{}); dt.appendChild(row[2]==="coal"?el("span",{class:"vb-coal"}):raw(ic(row[2],15))); dt.appendChild(document.createTextNode(" "+row[0])); dl.appendChild(el("div",{class:"vb-spec"}, dt, el("dd",{},row[1]))); }); wrap.appendChild(dl); }
+
+  if(r.notities) wrap.appendChild(block("Notities & volgende keer", el("p",{class:"vb-notes"},r.notities)));
+
+  wrap.appendChild(el("div",{class:"vb-detail-actions"},
+    btn("vb-btn vb-btn-ghost","copy","Dupliceer",function(){ var c=Object.assign({},r); c.id=null; c.naam=r.naam+" (kopie)"; c.datum=new Date().toISOString().slice(0,10); c.kernFases=r.kernFases.map(function(p){return Object.assign({},p,{id:uid()});}); S.draft=c; S.screen="cook-form"; render(); }),
+    btn("vb-btn vb-btn-primary","pencil","Bewerken",function(){ S.draft=JSON.parse(JSON.stringify(r)); S.screen="cook-form"; render(); })
+  ));
+  wrap.appendChild(deleteRow("Deze cook verwijderen?",function(){ S.recepten=S.recepten.filter(function(x){return x.id!==r.id;}); TOMB[r.id]=Date.now(); persistTomb(); saveRecepten(); touch(); go("cooks"); }));
+  return wrap;
+}
+
+/* ===================== RUB-DETAIL ===================== */
+function rubDetail(){
+  var r=S.rubs.filter(function(x){return x.id===S.selRub;})[0];
+  if(!r) return el("p",{class:"vb-muted vb-center"},"Niet gevonden.");
+  var wrap=el("div",{class:"vb-detail"});
+  wrap.appendChild(el("div",{class:"vb-detail-head"}, el("div",{}, el("h2",{},r.naam), el("p",{class:"vb-detail-meat"},r.type)), el("span",{class:"vb-rub-tag big"},r.type)));
+  var ul=el("ul",{class:"vb-ing-list-view"}); (r.ingredienten||[]).filter(function(i){return i.naam;}).forEach(function(i){ ul.appendChild(el("li",{}, el("span",{},i.naam), el("span",{class:"vb-ing-amt"}, fmtAmount(Number(i.hoeveelheid))+" "+i.eenheid))); });
+  wrap.appendChild(block("Ingrediënten · voor "+fmtAmount(r.refGewicht)+" "+r.refEenheid+" vlees", ul));
+
+  var calcRes=el("div");
+  var calcIn=el("input",{type:"number",min:"0",step:"0.1",placeholder:"bijv. 3"});
+  calcIn.addEventListener("input",function(){ clear(calcRes); var g=toGrams(calcIn.value,"kg"); if(g>0) calcRes.appendChild(scaledIngredients(r,g,true)); });
+  var calcTitle=el("span",{style:{display:"flex",alignItems:"center",gap:"6px"}}, raw(ic("calculator",13)), " Snel omrekenen");
+  wrap.appendChild(block(calcTitle, [ el("div",{class:"vb-calc"}, el("span",{},"Bereken voor"), calcIn, el("span",{},"kg vlees")), calcRes ]));
+
+  if(r.notities) wrap.appendChild(block("Notities", el("p",{class:"vb-notes"},r.notities)));
+
+  wrap.appendChild(el("div",{class:"vb-detail-actions"},
+    btn("vb-btn vb-btn-ghost","copy","Dupliceer",function(){ var c=Object.assign({},r); c.id=null; c.naam=r.naam+" (kopie)"; c.ingredienten=r.ingredienten.map(function(i){return Object.assign({},i,{id:uid()});}); S.rubDraft=c; S.screen="rub-form"; render(); }),
+    btn("vb-btn vb-btn-primary","pencil","Bewerken",function(){ S.rubDraft=JSON.parse(JSON.stringify(r)); S.screen="rub-form"; render(); })
+  ));
+  wrap.appendChild(deleteRow("Deze rub verwijderen?",function(){ S.rubs=S.rubs.filter(function(x){return x.id!==r.id;}); TOMB[r.id]=Date.now(); persistTomb(); saveRubs(); touch(); go("rubs"); }));
+  return wrap;
+}
+
+function deleteRow(label, onDelete){
+  var box=el("div"); 
+  function showLink(){ clear(box); box.appendChild(el("button",{class:"vb-del-link",onClick:showConfirm}, raw(ic("trash",14)), " Verwijderen")); }
+  function showConfirm(){ clear(box); box.appendChild(el("div",{class:"vb-del-confirm"}, el("span",{},label), el("div",{}, btn("vb-btn vb-btn-ghost",null,"Nee",showLink), btn("vb-btn vb-btn-danger",null,"Verwijderen",onDelete)))); }
+  showLink(); return box;
+}
+
+/* ===================== INSTELLINGEN ===================== */
+function settings(){
+  var wrap=el("div");
+  wrap.appendChild(el("h2",{class:"vb-form-title"},"Instellingen"));
+  var statusHtml = storageOK
+    ? "<b>Automatisch opslaan: aan.</b> Je cooks en rubs worden bewaard in deze browser. Maak af en toe een back-up met Exporteren."
+    : "<b>Automatisch opslaan: uit.</b> Dit bestand draait zonder vaste opslag-locatie. Wat je invult blijft alleen tijdens deze sessie bewaard — gebruik <b>Exporteren</b> om je gegevens als bestand op te slaan, en <b>Importeren</b> om ze terug te laden.";
+  wrap.appendChild(el("div",{class:"vb-set-status",html:statusHtml}));
+
+  wrap.appendChild(btn("vb-btn vb-btn-primary vb-btn-block","download","Exporteer gegevens (back-up)",doExport));
+  wrap.appendChild(btn("vb-btn vb-btn-ghost vb-btn-block","plus","Importeer & voeg toe",doImportMerge));
+  wrap.appendChild(btn("vb-btn vb-btn-ghost vb-btn-block","upload","Importeer & vervang alles",doImport));
+
+  wrap.appendChild(el("h3",{class:"vb-block-title",style:{marginTop:"26px"}},"Synchronisatie tussen apparaten"));
+  if(!SY.token){
+    wrap.appendChild(el("p",{class:"vb-set-note",style:{marginTop:"0",marginBottom:"0"}},"Koppel een GitHub-token (alleen gist-rechten) om je cooks en rubs automatisch te synchroniseren tussen je telefoon, tablet en computer. Zie het stappenplan voor het aanmaken van een token."));
+    var tIn=el("input",{type:"password",placeholder:"Plak hier je GitHub-token","aria-label":"GitHub-token"});
+    wrap.appendChild(el("div",{class:"vb-sync-field"}, tIn, btn("vb-btn vb-btn-primary",null,"Koppelen",function(){
+      var v=tIn.value.trim(); if(!v){ alert("Plak eerst je GitHub-token."); return; }
+      SY.token=v; SY.dirty=true; persistSync(); render(); syncNow(true);
+    })));
+  } else {
+    wrap.appendChild(el("div",{class:"vb-set-status",id:"vb-sync-status",html:syncStatusHtml()}));
+    wrap.appendChild(btn("vb-btn vb-btn-ghost vb-btn-block","refresh","Nu synchroniseren",function(){ syncNow(true); }));
+    wrap.appendChild(el("button",{class:"vb-del-link",style:{margin:"4px auto 0"},onClick:function(){
+      if(confirm("Synchronisatie ontkoppelen? Je gegevens blijven gewoon op dit apparaat staan.")){ SY.token=""; SY.gistId=""; persistSync(); render(); }
+    }}, raw(ic("x",14))," Ontkoppelen"));
+  }
+
+  wrap.appendChild(el("p",{class:"vb-set-note"}, S.recepten.length+" cooks · "+S.rubs.length+" rubs/marinades opgeslagen."));
+  wrap.appendChild(el("p",{class:"vb-set-note"},"Tip: voeg de app toe aan je startscherm (Chrome ▸ menu ▸ Toevoegen aan startscherm) zodat hij schermvullend opent."));
+  return wrap;
+}
+function doExport(){
+  var data={ app:"vuurboek", version:1, exported:new Date().toISOString(), recepten:S.recepten, rubs:S.rubs };
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a"); a.href=url; a.download="vuurboek-backup-"+new Date().toISOString().slice(0,10)+".json";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); setTimeout(function(){ URL.revokeObjectURL(url); },1000);
+}
+function pickJson(onData){
+  var inp=document.createElement("input"); inp.type="file"; inp.accept=".json,application/json";
+  inp.addEventListener("change",function(){ var f=inp.files[0]; if(!f) return; var rd=new FileReader();
+    rd.onload=function(){ try{ var data=JSON.parse(rd.result);
+      var rec=Array.isArray(data.recepten)?data.recepten:[]; var rb=Array.isArray(data.rubs)?data.rubs:[];
+      onData(rec, rb);
+    }catch(e){ alert("Kon het bestand niet lezen. Is het een Vuurboek-bestand (.json)?"); } };
+    rd.readAsText(f);
+  });
+  inp.click();
+}
+function doImport(){
+  pickJson(function(rec, rb){
+    if(!confirm("Hiermee vervang je je huidige gegevens door "+rec.length+" cooks en "+rb.length+" rubs uit het bestand. Doorgaan?")) return;
+    var now=Date.now(), incoming={};
+    rec.concat(rb).forEach(function(r){ if(r&&r.id) incoming[r.id]=1; });
+    S.recepten.concat(S.rubs).forEach(function(r){ if(r.id && !incoming[r.id]) TOMB[r.id]=now; });
+    S.recepten=rec.map(function(r){ var m=migrateRecipe(r); if(!m.id) m.id=uid(); if(!m.updatedAt) m.updatedAt=now; return m; }).sort(byDate);
+    S.rubs=rb.map(function(r){ var m=Object.assign({},r); if(!m.id) m.id=uid(); if(!m.updatedAt) m.updatedAt=now; return m; }).sort(byName);
+    persistTomb(); saveRecepten(); saveRubs(); touch();
+    alert("Geïmporteerd: "+rec.length+" cooks en "+rb.length+" rubs."); render();
+  });
+}
+function doImportMerge(){
+  pickJson(function(rec, rb){
+    if(rec.length===0 && rb.length===0){ alert("Geen cooks of rubs gevonden in dit bestand."); return; }
+    var haveR={}, haveB={};
+    S.recepten.forEach(function(r){ if(r.id) haveR[r.id]=1; });
+    S.rubs.forEach(function(r){ if(r.id) haveB[r.id]=1; });
+    var addedR=0, addedB=0, skipped=0;
+    rec.forEach(function(r){
+      if(r.id && haveR[r.id]){ skipped++; return; }
+      var m=migrateRecipe(r); if(!m.id) m.id=uid(); m.updatedAt=Date.now(); haveR[m.id]=1;
+      S.recepten.push(m); addedR++;
+    });
+    rb.forEach(function(r){
+      if(r.id && haveB[r.id]){ skipped++; return; }
+      var m=Object.assign({},r); if(!m.id) m.id=uid(); m.updatedAt=Date.now(); haveB[m.id]=1;
+      S.rubs.push(m); addedB++;
+    });
+    if(addedR) saveRecepten();
+    if(addedB) saveRubs();
+    if(addedR||addedB) touch();
+    alert("Toegevoegd: "+addedR+" cooks en "+addedB+" rubs."+(skipped? " "+skipped+" overgeslagen (stonden er al in).":""));
+    render();
+  });
+}
+
+/* ===================== sync (GitHub Gist) ===================== */
+var GIST_FILE="vuurboek-data.json";
+var syncTimer=null;
+function scheduleSync(){ if(!SY.token) return; if(syncTimer) clearTimeout(syncTimer); syncTimer=setTimeout(function(){ syncTimer=null; syncNow(); },3000); }
+function touch(){ SY.dirty=true; persistSync(); scheduleSync(); }
+function gh(method, path, body){
+  return fetch("https://api.github.com"+path,{method:method,headers:{"Authorization":"Bearer "+SY.token,"Accept":"application/vnd.github+json"},body:body?JSON.stringify(body):undefined})
+    .then(function(res){
+      if(res.status===401||res.status===403) throw new Error("token geweigerd of verlopen");
+      if(res.status===404) throw new Error("gist niet gevonden");
+      if(!res.ok) throw new Error("GitHub-fout "+res.status);
+      return res.json();
+    });
+}
+function syncPayload(){ return JSON.stringify({app:"vuurboek",version:2,updated:new Date().toISOString(),recepten:S.recepten,rubs:S.rubs,deleted:TOMB},null,1); }
+function ensureGist(){
+  if(SY.gistId) return Promise.resolve();
+  return gh("GET","/gists?per_page=100").then(function(list){
+    var found=(list||[]).filter(function(g){ return g.files && g.files[GIST_FILE]; })[0];
+    if(found){ SY.gistId=found.id; persistSync(); return; }
+    var files={}; files[GIST_FILE]={content:syncPayload()};
+    return gh("POST","/gists",{description:"Vuurboek — kamado kooklogboek (data)",public:false,files:files}).then(function(g){ SY.gistId=g.id; persistSync(); });
+  });
+}
+function pullRemote(){
+  return gh("GET","/gists/"+SY.gistId).then(function(g){
+    var f=g.files && g.files[GIST_FILE]; if(!f) return null;
+    if(f.truncated) return fetch(f.raw_url).then(function(r){ return r.json(); });
+    try{ return JSON.parse(f.content); }catch(e){ return null; }
+  });
+}
+function mergeTombs(remote){ if(!remote) return; Object.keys(remote).forEach(function(id){ if(!TOMB[id]||remote[id]>TOMB[id]) TOMB[id]=remote[id]; }); }
+function mergeLists(local, remote){
+  var map={};
+  function put(it){ if(!it||!it.id) return; var ex=map[it.id]; if(!ex||(it.updatedAt||0)>(ex.updatedAt||0)) map[it.id]=it; }
+  local.forEach(put); (remote||[]).forEach(put);
+  return Object.keys(map).map(function(id){ return map[id]; }).filter(function(it){ return !(TOMB[it.id] && TOMB[it.id]>=(it.updatedAt||0)); });
+}
+function syncNow(manual){
+  if(!SY.token) return;
+  if(!navigator.onLine){ if(manual) alert("Geen internetverbinding — synchroniseren lukt zodra je weer online bent."); return; }
+  if(SY.busy){ SY.queued=true; return; }
+  SY.busy=true; SY.error=""; updateSyncUI();
+  var before=JSON.stringify([S.recepten,S.rubs]), remoteStr="";
+  ensureGist().then(pullRemote).then(function(remote){
+    if(remote){
+      remoteStr=JSON.stringify({r:remote.recepten||[],b:remote.rubs||[],d:remote.deleted||{}});
+      mergeTombs(remote.deleted);
+      S.recepten=mergeLists(S.recepten,(remote.recepten||[]).map(migrateRecipe)).sort(byDate);
+      S.rubs=mergeLists(S.rubs,remote.rubs||[]).sort(byName);
+      persist(KEY_RECEPTEN,S.recepten); persist(KEY_RUBS,S.rubs); persistTomb();
+    }
+    if(SY.dirty || JSON.stringify({r:S.recepten,b:S.rubs,d:TOMB})!==remoteStr){
+      var files={}; files[GIST_FILE]={content:syncPayload()};
+      return gh("PATCH","/gists/"+SY.gistId,{files:files});
+    }
+  }).then(function(){ SY.dirty=false; SY.lastSync=Date.now(); })
+  .catch(function(e){ SY.error=(e&&e.message)?e.message:"onbekende fout"; })
+  .then(function(){
+    SY.busy=false; persistSync();
+    if(SY.queued){ SY.queued=false; updateSyncUI(); syncNow(); return; }
+    var changed=JSON.stringify([S.recepten,S.rubs])!==before;
+    if(changed && ["cooks","rubs","cook-detail","rub-detail","settings"].indexOf(S.screen)>-1) render();
+    else updateSyncUI();
+  });
+}
+function syncStatusHtml(){
+  if(SY.busy) return "Synchroniseren…";
+  if(SY.error) return "<b>Sync mislukt:</b> "+SY.error+". Controleer je token en verbinding en probeer opnieuw.";
+  var s = SY.lastSync ? "<b>Sync: aan.</b> Laatste sync: "+new Date(SY.lastSync).toLocaleString("nl-NL",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})+"." : "<b>Sync: aan.</b> Nog niet gesynchroniseerd.";
+  if(SY.dirty) s+=" Er staan nog wijzigingen klaar.";
+  return s;
+}
+function updateSyncUI(){
+  var b=document.getElementById("vb-sync-btn"); if(b) b.classList[SY.busy?"add":"remove"]("vb-spin");
+  var st=document.getElementById("vb-sync-status"); if(st) st.innerHTML=syncStatusHtml();
+}
+
+/* ===================== render ===================== */
+function render(){
+  clear(ROOT);
+  var body;
+  switch(S.screen){
+    case "cooks": body=cookList(); break;
+    case "rubs": body=rubList(); break;
+    case "cook-form": body=cookForm(); break;
+    case "rub-form": body=rubForm(); break;
+    case "cook-detail": body=cookDetail(); break;
+    case "rub-detail": body=rubDetail(); break;
+    case "settings": body=settings(); break;
+    default: body=cookList();
+  }
+  ROOT.appendChild(header());
+  ROOT.appendChild(el("main",{class:"vb-main"}, body));
+  ROOT.appendChild(tabs());
+  window.scrollTo(0,0);
+}
+
+render();
+if(SY.token) syncNow();
+window.addEventListener("online",function(){ if(SY.token && SY.dirty) syncNow(); });
+})();
+</script>
+</body>
+</html>
