@@ -106,6 +106,10 @@ svg{display:block;}
 .vb-fase-temp input{width:38px;border:none;background:none;font-size:14px;text-align:right;padding:9px 0;outline:none;color:var(--ink);}
 .vb-fase-deg{font-size:11px;color:var(--muted);}
 .vb-fase-top .vb-row-del{margin-left:auto;}
+.vb-fase-mode{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:9px;overflow:hidden;flex:none;}
+.vb-fase-mode button{border:none;background:none;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:7px 10px;color:var(--muted);cursor:pointer;}
+.vb-fase-mode button.on{background:var(--char);color:#f3ede0;}
+.vb-fase-time input{width:38px;border:none;background:none;font-size:14px;text-align:right;padding:9px 0;outline:none;color:var(--ink);}
 .vb-fase-desc{width:100%;font-family:'Inter',sans-serif;font-size:14px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 10px;color:var(--ink);outline:none;}
 .vb-preview{margin:-4px 0 15px;background:var(--panel);border-radius:11px;padding:12px 14px;}
 .vb-ing-meta{font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:.08em;font-size:11px;color:var(--muted);margin:0 0 8px;}
@@ -252,7 +256,10 @@ function heatLabel(t){ var v=Number(t); if(!v||isNaN(v)) return ""; if(v<130) re
 function toGrams(val,eu){ var n=Number(val); if(!n||isNaN(n)) return 0; return eu==="kg"? n*1000 : n; }
 function fmtAmount(v){ if(v==null||isNaN(v)) return ""; var r; if(v>=10) r=Math.round(v); else if(v>=1) r=Math.round(v*10)/10; else r=Math.round(v*100)/100; return r.toLocaleString("nl-NL",{maximumFractionDigits:2}); }
 function formatDate(iso){ try{ return new Date(iso+"T00:00:00").toLocaleDateString("nl-NL",{day:"numeric",month:"long",year:"numeric"}); }catch(e){ return iso; } }
-function finalKern(fases){ var f=(fases||[]).filter(function(p){return p.temp;}); return f.length? Number(f[f.length-1].temp) : null; }
+function finalKern(fases){ var f=(fases||[]).filter(function(p){return p.mode!=="tijd" && p.temp;}); return f.length? Number(f[f.length-1].temp) : null; }
+function faseTijd(p){ var u=Number(p.uur)||0, m=Number(p.min)||0; if(!u&&!m) return ""; var s=[]; if(u) s.push(u+" u"); if(m) s.push(m+" min"); return s.join(" "); }
+function faseHeeftInhoud(p){ return p.mode==="tijd" ? (String(p.uur).trim()||String(p.min).trim()) : String(p.temp).trim(); }
+function faseLabel(p){ return p.mode==="tijd" ? faseTijd(p) : "tot "+p.temp+" °C"; }
 function effPit(r){ if(r.pitTemp) return r.pitTemp; var f=(r.kernFases||[]).filter(function(p){return p.pit;})[0]; return f? f.pit : ""; }
 function byDate(a,b){ return (b.datum||"").localeCompare(a.datum||""); }
 function byName(a,b){ return a.naam.localeCompare(b.naam); }
@@ -262,7 +269,7 @@ function migrateRecipe(r){ var m=Object.assign({},r);
   if(typeof m.gewicht==="string"){ var s=m.gewicht.toLowerCase(); var num=parseFloat(s.replace(",",".").replace(/[^0-9.]/g,"")); m.gewicht=isNaN(num)?"":num; m.gewichtEenheid=/(^|[^k])g(ram)?\b/.test(s)?"g":"kg"; }
   if(m.gewichtEenheid==null) m.gewichtEenheid="kg";
   if(!Array.isArray(m.kernFases)){ m.kernFases = m.kernTemp ? [{id:uid(),temp:Number(m.kernTemp),pit:"",beschrijving:""}] : []; }
-  m.kernFases = m.kernFases.map(function(p){ return Object.assign({pit:""}, p); });
+  m.kernFases = m.kernFases.map(function(p){ return Object.assign({mode:"kern",temp:"",uur:"",min:"",pit:""}, p); });
   if(m.rubRef==null) m.rubRef = m.rubMarinade ? "__custom__" : "";
   if(m.beoordeling==null) m.beoordeling=0;
   if(m.updatedAt==null) m.updatedAt=m.createdAt||0;
@@ -270,7 +277,7 @@ function migrateRecipe(r){ var m=Object.assign({},r);
 }
 
 /* ===================== blanks ===================== */
-function blankRecipe(){ return {id:null,naam:"",datum:new Date().toISOString().slice(0,10),soortVlees:"",gewicht:"",gewichtEenheid:"kg",porties:"",rubRef:"",rubMarinade:"",methode:"Indirect",pitTemp:"",kernFases:[{id:uid(),temp:"",pit:"",beschrijving:""}],gaartijd:"",rusttijd:"",houtskool:"",rookhout:"",beoordeling:0,notities:""}; }
+function blankRecipe(){ return {id:null,naam:"",datum:new Date().toISOString().slice(0,10),soortVlees:"",gewicht:"",gewichtEenheid:"kg",porties:"",rubRef:"",rubMarinade:"",methode:"Indirect",pitTemp:"",kernFases:[{id:uid(),mode:"kern",temp:"",uur:"",min:"",pit:"",beschrijving:""}],gaartijd:"",rusttijd:"",houtskool:"",rookhout:"",beoordeling:0,notities:""}; }
 function blankRub(){ return {id:null,naam:"",type:"Rub",refGewicht:"",refEenheid:"kg",ingredienten:[{id:uid(),naam:"",hoeveelheid:"",eenheid:"g"}],notities:""}; }
 var CATEGORIEEN=["Rund","Varken","Gevogelte","Wild","Vis","Schaal- & schelpdieren","Groente / vegetarisch"];
 var EENHEDEN=["g","ml","el","tl","stuks","teen","snufje","kop"];
@@ -491,7 +498,7 @@ function cookForm(){
   form.appendChild(field("Pit-temperatuur (°C)",pit)); form.appendChild(heatBox); updateHeat();
 
   // kernfases
-  var fasesWrap=el("div",{class:"vb-group"}, el("span",{class:"vb-field-lbl"},"Kerntemperatuur — fases"));
+  var fasesWrap=el("div",{class:"vb-group"}, el("span",{class:"vb-field-lbl"},"Fasen — kern of tijd"));
   var fasesBox=el("div",{class:"vb-fases"}); fasesWrap.appendChild(fasesBox);
   function drawFases(){
     clear(fasesBox);
@@ -499,8 +506,18 @@ function cookForm(){
       var row=el("div",{class:"vb-fase"});
       var top=el("div",{class:"vb-fase-top"});
       top.appendChild(el("span",{class:"vb-fase-no"},String(i+1)));
-      var tIn=el("input",{type:"number",value:p.temp,placeholder:"70"}); tIn.addEventListener("input",function(){ p.temp=tIn.value; });
-      top.appendChild(el("div",{class:"vb-fase-temp"}, el("span",{class:"vb-fase-tag"},"kern tot"), tIn, el("span",{class:"vb-fase-deg"},"°C")));
+      var mode=el("div",{class:"vb-fase-mode"});
+      mode.appendChild(el("button",{type:"button",class:p.mode!=="tijd"?"on":"",onClick:function(){ p.mode="kern"; drawFases(); }},"Kern"));
+      mode.appendChild(el("button",{type:"button",class:p.mode==="tijd"?"on":"",onClick:function(){ p.mode="tijd"; drawFases(); }},"Tijd"));
+      top.appendChild(mode);
+      if(p.mode==="tijd"){
+        var uIn=el("input",{type:"number",value:p.uur,placeholder:"4"}); uIn.addEventListener("input",function(){ p.uur=uIn.value; });
+        var mIn=el("input",{type:"number",value:p.min,placeholder:"0"}); mIn.addEventListener("input",function(){ p.min=mIn.value; });
+        top.appendChild(el("div",{class:"vb-fase-temp vb-fase-time"}, el("span",{class:"vb-fase-tag"},"na"), uIn, el("span",{class:"vb-fase-deg"},"u"), mIn, el("span",{class:"vb-fase-deg"},"min")));
+      } else {
+        var tIn=el("input",{type:"number",value:p.temp,placeholder:"70"}); tIn.addEventListener("input",function(){ p.temp=tIn.value; });
+        top.appendChild(el("div",{class:"vb-fase-temp"}, el("span",{class:"vb-fase-tag"},"kern tot"), tIn, el("span",{class:"vb-fase-deg"},"°C")));
+      }
       var pIn=el("input",{type:"number",value:p.pit,placeholder:"125"}); pIn.addEventListener("input",function(){ p.pit=pIn.value; });
       top.appendChild(el("div",{class:"vb-fase-temp"}, el("span",{class:"vb-fase-tag"},"pit"), pIn, el("span",{class:"vb-fase-deg"},"°C")));
       if(d.kernFases.length>1){ top.appendChild(el("button",{type:"button",class:"vb-row-del","aria-label":"Fase weg",onClick:function(){ d.kernFases=d.kernFases.filter(function(x){return x!==p;}); drawFases(); }}, raw(ic("x",15)))); }
@@ -511,7 +528,7 @@ function cookForm(){
     });
   }
   drawFases();
-  fasesWrap.appendChild(el("button",{type:"button",class:"vb-add-row",onClick:function(){ d.kernFases.push({id:uid(),temp:"",pit:"",beschrijving:""}); drawFases(); }}, raw(ic("plus",15)), " Fase toevoegen"));
+  fasesWrap.appendChild(el("button",{type:"button",class:"vb-add-row",onClick:function(){ d.kernFases.push({id:uid(),mode:"kern",temp:"",uur:"",min:"",pit:"",beschrijving:""}); drawFases(); }}, raw(ic("plus",15)), " Fase toevoegen"));
   fasesWrap.appendChild(el("p",{class:"vb-hint vb-soft",style:{marginTop:"4px"}},"Pit per fase is optioneel — laat leeg om de algemene pit-temperatuur hierboven te gebruiken."));
   form.appendChild(fasesWrap);
 
@@ -533,7 +550,7 @@ function cookForm(){
   var hint=el("p",{class:"vb-hint",style:{display:"none"}},"Naam en soort vlees zijn nodig om op te slaan."); form.appendChild(hint);
   var saveBtn=btn("vb-btn vb-btn-primary","save","Opslaan",saveCook);
   function checkValid(){ var ok=d.naam.trim()&&d.soortVlees.trim(); saveBtn.disabled=!ok; hint.style.display=ok?"none":"block"; }
-  function saveCook(){ if(!(d.naam.trim()&&d.soortVlees.trim())) return; var clean=Object.assign({},d); clean.kernFases=d.kernFases.filter(function(p){return String(p.temp).trim();});
+  function saveCook(){ if(!(d.naam.trim()&&d.soortVlees.trim())) return; var clean=Object.assign({},d); clean.kernFases=d.kernFases.filter(faseHeeftInhoud);
     clean.updatedAt=Date.now();
     if(d.id){ S.recepten=S.recepten.map(function(r){return r.id===d.id?clean:r;}); }
     else { clean.id=uid(); clean.createdAt=Date.now(); S.recepten.unshift(clean); }
@@ -598,14 +615,14 @@ function rubForm(){
 function cookDetail(){
   var r=S.recepten.filter(function(x){return x.id===S.selCook;})[0];
   if(!r) return el("p",{class:"vb-muted vb-center"},"Niet gevonden.");
-  var fk=finalKern(r.kernFases); var fases=(r.kernFases||[]).filter(function(p){return p.temp;}); var ep=effPit(r);
+  var fk=finalKern(r.kernFases); var fases=(r.kernFases||[]).filter(faseHeeftInhoud); var ep=effPit(r);
   var linkedRub=S.rubs.filter(function(x){return x.id===r.rubRef;})[0]; var weightG=toGrams(r.gewicht,r.gewichtEenheid);
   var wrap=el("div",{class:"vb-detail"});
   wrap.appendChild(el("div",{class:"vb-detail-head"}, el("div",{}, el("h2",{},r.naam), el("p",{class:"vb-detail-meat"},r.soortVlees)), flames(r.beoordeling,false,false)));
   if(r.datum) wrap.appendChild(el("p",{class:"vb-detail-date"}, raw(ic("calendar",13)), " "+formatDate(r.datum)));
   wrap.appendChild(el("div",{class:"vb-gauges"}, gauge("Pit",ep,heatColor(ep),heatLabel(ep)), gauge("Kern (doel)",fk,"#1f1a15")));
 
-  if(fases.length){ var ol=el("ol",{class:"vb-fase-list"}); fases.forEach(function(p,i){ var li=el("li",{}, el("span",{class:"vb-fase-list-no"},String(i+1)), el("span",{class:"vb-fase-list-temp"},"tot "+p.temp+" °C")); if(p.pit) li.appendChild(el("span",{class:"vb-fase-list-pit",style:{background:heatColor(p.pit)}},"pit "+p.pit+"°")); if(p.beschrijving) li.appendChild(el("span",{class:"vb-fase-list-desc"},p.beschrijving)); ol.appendChild(li); }); wrap.appendChild(block("Kerntemperatuur — fases",ol)); }
+  if(fases.length){ var ol=el("ol",{class:"vb-fase-list"}); fases.forEach(function(p,i){ var li=el("li",{}, el("span",{class:"vb-fase-list-no"},String(i+1)), el("span",{class:"vb-fase-list-temp"},faseLabel(p))); if(p.pit) li.appendChild(el("span",{class:"vb-fase-list-pit",style:{background:heatColor(p.pit)}},"pit "+p.pit+"°")); if(p.beschrijving) li.appendChild(el("span",{class:"vb-fase-list-desc"},p.beschrijving)); ol.appendChild(li); }); wrap.appendChild(block("Fasen — kern of tijd",ol)); }
 
   if(linkedRub){ wrap.appendChild(block(linkedRub.type+" · "+linkedRub.naam, scaledIngredients(linkedRub,weightG))); }
   else if(r.rubRef==="__custom__"&&r.rubMarinade){ wrap.appendChild(block("Rub / marinade", el("p",{},r.rubMarinade))); }
