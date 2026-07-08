@@ -359,6 +359,8 @@ function byDateDesc(a,b){ var c=(b.datum||"").localeCompare(a.datum||""); if(c) 
 function applySort(list, mode){ var l=list.slice(); l.sort(mode==="naam"?byName:byDateDesc); return l; }
 /* unieke, gebruikte waarden voor een vrij tekstveld (bijv. houtskool, rookhout) */
 function usedValues(list, key){ var seen={}, order=[]; list.forEach(function(r){ var v=(r[key]==null?"":String(r[key])).trim(); if(v && !seen[v.toLowerCase()]){ seen[v.toLowerCase()]=1; order.push(v); } }); order.sort(function(a,b){ return a.localeCompare(b); }); return order; }
+/* zoals usedValues, maar voor velden die een lijst met waarden bevatten (bijv. rookhout) */
+function usedValuesArr(list, key){ var seen={}, order=[]; list.forEach(function(r){ (Array.isArray(r[key])?r[key]:[]).forEach(function(v){ v=String(v).trim(); if(v && !seen[v.toLowerCase()]){ seen[v.toLowerCase()]=1; order.push(v); } }); }); order.sort(function(a,b){ return a.localeCompare(b); }); return order; }
 
 /* ===================== migratie ===================== */
 function migrateRecipe(r){ var m=Object.assign({},r);
@@ -368,6 +370,8 @@ function migrateRecipe(r){ var m=Object.assign({},r);
   m.kernFases = m.kernFases.map(function(p){ return Object.assign({mode:"kern",temp:"",uur:"",min:"",pit:""}, p); });
   if(m.rubRef==null) m.rubRef = m.rubMarinade ? "__custom__" : "";
   if(m.beoordeling==null) m.beoordeling=0;
+  /* rookhout: vroeger een vrij tekstveld, nu een lijst met gekozen houtsoorten */
+  if(!Array.isArray(m.rookhout)){ var rh=(m.rookhout==null?"":String(m.rookhout)).trim(); m.rookhout = rh ? [rh] : []; }
   if(m.updatedAt==null) m.updatedAt=m.createdAt||0;
   return m;
 }
@@ -380,11 +384,13 @@ function migrateSide(r){ var m=Object.assign({},r);
 }
 
 /* ===================== blanks ===================== */
-function blankRecipe(){ return {id:null,naam:"",datum:new Date().toISOString().slice(0,10),soortVlees:"",gewicht:"",gewichtEenheid:"kg",porties:"",rubRef:"",rubMarinade:"",methode:"Indirect",pitTemp:"",kernFases:[{id:uid(),mode:"kern",temp:"",uur:"",min:"",pit:"",beschrijving:""}],gaartijd:"",rusttijd:"",houtskool:"",rookhout:"",beoordeling:0,notities:""}; }
+function blankRecipe(){ return {id:null,naam:"",datum:new Date().toISOString().slice(0,10),soortVlees:"",gewicht:"",gewichtEenheid:"kg",porties:"",rubRef:"",rubMarinade:"",methode:"Indirect",pitTemp:"",kernFases:[{id:uid(),mode:"kern",temp:"",uur:"",min:"",pit:"",beschrijving:""}],gaartijd:"",rusttijd:"",houtskool:"",rookhout:[],beoordeling:0,notities:""}; }
 function blankRub(){ return {id:null,naam:"",type:"Rub",refGewicht:"",refEenheid:"kg",ingredienten:[{id:uid(),naam:"",hoeveelheid:"",eenheid:"g"}],notities:""}; }
 function blankSide(){ return {id:null,naam:"",porties:"",ingredienten:[{id:uid(),naam:"",hoeveelheid:"",eenheid:"g"}],beschrijving:""}; }
 var CATEGORIEEN=["Rund","Varken","Gevogelte","Wild","Vis","Schaal- & schelpdieren","Groente / vegetarisch"];
 var EENHEDEN=["g","ml","el","tl","stuks","teen","snufje","kop"];
+/* rookhoutsoorten (bron: rookplankje.nl) — meervoudige keuze bij een cook */
+var ROOKHOUT=["Eik","Beuken","Appel","Kersen","Hickory","Pruim","Perzik","Elzen","Walnoot","Olijf","Whiskyvat","Wijnvat"];
 
 /* ===================== state ===================== */
 var S = {
@@ -545,7 +551,7 @@ function cookList(){
     clear(results);
     var q=S.query.trim().toLowerCase(), f=S.flt;
     // verlopen filterwaarden opschonen (bijv. na verwijderen)
-    var cats=catsUsed(), meths=usedValues(S.recepten,"methode"), kolen=usedValues(S.recepten,"houtskool"), houts=usedValues(S.recepten,"rookhout");
+    var cats=catsUsed(), meths=usedValues(S.recepten,"methode"), kolen=usedValues(S.recepten,"houtskool"), houts=usedValuesArr(S.recepten,"rookhout");
     f.cat=f.cat.filter(function(v){return cats.indexOf(v)>-1;});
     f.methode=f.methode.filter(function(v){return meths.indexOf(v)>-1;});
     f.houtskool=f.houtskool.filter(function(v){return kolen.indexOf(v)>-1;});
@@ -556,8 +562,8 @@ function cookList(){
       if(f.methode.length && f.methode.indexOf(r.methode)===-1) return false;
       if(f.temp.length){ var p=Number(effPit(r)); if(!f.temp.some(function(t){return tempMatch(t,p);})) return false; }
       if(f.houtskool.length && f.houtskool.indexOf(r.houtskool)===-1) return false;
-      if(f.rookhout.length && f.rookhout.indexOf(r.rookhout)===-1) return false;
-      if(q && [r.naam,r.soortVlees,r.houtskool,r.rookhout].filter(Boolean).join(" ").toLowerCase().indexOf(q)===-1) return false;
+      if(f.rookhout.length && !f.rookhout.some(function(w){ return (r.rookhout||[]).indexOf(w)>-1; })) return false;
+      if(q && [r.naam,r.soortVlees,r.houtskool,(r.rookhout||[]).join(" ")].filter(Boolean).join(" ").toLowerCase().indexOf(q)===-1) return false;
       return true;
     });
     list=applySort(list,S.sortCook);
@@ -661,7 +667,7 @@ function filterSheet(){
     section("Pit-temperatuur", chipRowMulti([{v:"",l:"Alle"},{v:"low",l:"< 130°"},{v:"mid",l:"130–200°"},{v:"high",l:"> 200°"}], function(){return F.temp;}, function(a){F.temp=a;}));
     var kolen=usedValues(S.recepten,"houtskool");
     if(kolen.length) section("Kolensoort", chipRowMulti(opts(0,kolen), function(){return F.houtskool;}, function(a){F.houtskool=a;}));
-    var houts=usedValues(S.recepten,"rookhout");
+    var houts=usedValuesArr(S.recepten,"rookhout");
     if(houts.length) section("Rookhout", chipRowMulti(opts(0,houts), function(){return F.rookhout;}, function(a){F.rookhout=a;}));
     sheet.appendChild(el("div",{class:"vb-sheet-actions"},
       btn("vb-btn vb-btn-ghost",null,"Wissen",function(){ S.flt={cat:[],methode:[],temp:[],houtskool:[],rookhout:[]}; S.sortCook="naam"; S.sheet=false; render(); }),
@@ -865,8 +871,23 @@ function cookForm(){
 
   var hk=el("input",{value:d.houtskool,placeholder:"bijv. Bastard restaurant briketten"}); hk.addEventListener("input",function(){ d.houtskool=hk.value; });
   form.appendChild(field("Gebruikte houtskool",hk));
-  var rh=el("input",{value:d.rookhout,placeholder:"bijv. eik / hickory chunks"}); rh.addEventListener("input",function(){ d.rookhout=rh.value; });
-  form.appendChild(field("Rookhout (optioneel)",rh));
+  var rhBox=el("div",{class:"vb-chips"});
+  function drawRh(){
+    clear(rhBox);
+    /* vaste lijst, aangevuld met eventuele oudere/eigen waarden die al gekozen waren */
+    var soorten=ROOKHOUT.concat(d.rookhout.filter(function(w){ return ROOKHOUT.indexOf(w)===-1; }));
+    soorten.forEach(function(w){
+      var on=d.rookhout.indexOf(w)>-1;
+      var b=el("button",{type:"button",class:"vb-chip"+(on?" on":"")});
+      if(on) b.appendChild(raw(ic("check",14)));
+      b.appendChild(document.createTextNode(w));
+      b.addEventListener("click",function(){ var a=d.rookhout.slice(); var i=a.indexOf(w); if(i>-1) a.splice(i,1); else a.push(w); d.rookhout=a; drawRh(); });
+      rhBox.appendChild(b);
+    });
+  }
+  drawRh();
+  /* geen field() (dat wikkelt in een <label>, waardoor een klik op een chip ook de eerste chip togglet) */
+  form.appendChild(el("div",{class:"vb-field"}, el("span",{class:"vb-field-lbl"},"Rookhout (optioneel — meerdere mogelijk)"), rhBox));
 
   var flBox=el("div"); function drawFl(){ clear(flBox); flBox.appendChild(flames(d.beoordeling,true,26,function(v){ d.beoordeling=v; drawFl(); })); }
   drawFl(); form.appendChild(field("Beoordeling",flBox));
@@ -993,7 +1014,7 @@ function cookDetail(){
   if(r.gaartijd) rows.push(["Gaartijd",r.gaartijd,"clock"]);
   if(r.rusttijd) rows.push(["Rusttijd",r.rusttijd,"timer"]);
   if(r.houtskool) rows.push(["Houtskool",r.houtskool,"coal"]);
-  if(r.rookhout) rows.push(["Rookhout",r.rookhout,"trees"]);
+  if(r.rookhout && r.rookhout.length) rows.push(["Rookhout",r.rookhout.join(", "),"trees"]);
   if(r.porties) rows.push(["Porties",r.porties,"users"]);
   if(r.gewicht) rows.push(["Gewicht",fmtAmount(r.gewicht)+" "+r.gewichtEenheid,"scale"]);
   if(rows.length){ var dl=el("dl",{class:"vb-specs"}); rows.forEach(function(row){ var dt=el("dt",{}); dt.appendChild(row[2]==="coal"?el("span",{class:"vb-coal"}):el("span",{class:"vb-spec-ic"},raw(ic(row[2],15)))); dt.appendChild(document.createTextNode(" "+row[0])); dl.appendChild(el("div",{class:"vb-spec"}, dt, el("dd",{},row[1]))); }); wrap.appendChild(dl); }
@@ -1001,7 +1022,7 @@ function cookDetail(){
   if(r.notities) wrap.appendChild(block("Notities & volgende keer", el("p",{class:"vb-notes"},r.notities)));
 
   wrap.appendChild(el("div",{class:"vb-detail-actions"},
-    btn("vb-btn vb-btn-ghost","copy","Dupliceer",function(){ var c=Object.assign({},r); c.id=null; c.naam=r.naam+" (kopie)"; c.datum=new Date().toISOString().slice(0,10); c.kernFases=r.kernFases.map(function(p){return Object.assign({},p,{id:uid()});}); S.draft=c; S.screen="cook-form"; render(); }),
+    btn("vb-btn vb-btn-ghost","copy","Dupliceer",function(){ var c=Object.assign({},r); c.id=null; c.naam=r.naam+" (kopie)"; c.datum=new Date().toISOString().slice(0,10); c.kernFases=r.kernFases.map(function(p){return Object.assign({},p,{id:uid()});}); c.rookhout=(r.rookhout||[]).slice(); S.draft=c; S.screen="cook-form"; render(); }),
     btn("vb-btn vb-btn-primary","pencil","Bewerken",function(){ S.draft=JSON.parse(JSON.stringify(r)); S.screen="cook-form"; render(); })
   ));
   wrap.appendChild(deleteRow("Deze cook verwijderen?",function(){ S.recepten=S.recepten.filter(function(x){return x.id!==r.id;}); TOMB[r.id]=Date.now(); persistTomb(); saveRecepten(); touch(); go("cooks"); }));
