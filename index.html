@@ -1236,7 +1236,7 @@ function settings(){
   wrap.appendChild(el("div",{class:"vb-set-status",html:statusHtml}));
 
   wrap.appendChild(btn("vb-btn vb-btn-primary vb-btn-block","download","Exporteer gegevens (back-up)",doExport));
-  wrap.appendChild(btn("vb-btn vb-btn-ghost vb-btn-block","plus","Importeer & voeg toe",doImportMerge));
+  wrap.appendChild(btn("vb-btn vb-btn-ghost vb-btn-block","plus","Importeer: toevoegen & bijwerken",doImportMerge));
   wrap.appendChild(btn("vb-btn vb-btn-ghost vb-btn-block","upload","Importeer & vervang alles",doImport));
 
   wrap.appendChild(el("h3",{class:"vb-h2s"},"Synchronisatie tussen apparaten"));
@@ -1299,33 +1299,34 @@ function doImportMerge(){
     S.rubs.forEach(function(r){ if(r.id) haveB[r.id]=1; });
     S.sides.forEach(function(r){ if(r.id) haveS[r.id]=1; });
     S.sauzen.forEach(function(r){ if(r.id) haveSA[r.id]=1; });
-    var addedR=0, addedB=0, addedS=0, addedSA=0, skipped=0;
+    var addedR=0, addedB=0, addedS=0, addedSA=0, updR=0, updB=0, updS=0, updSA=0;
     rec.forEach(function(r){
-      if(r.id && haveR[r.id]){ skipped++; return; }
-      var m=migrateRecipe(r); if(!m.id) m.id=uid(); m.updatedAt=Date.now(); haveR[m.id]=1;
-      S.recepten.push(m); addedR++;
+      var m=migrateRecipe(r); m.updatedAt=Date.now();
+      if(m.id && haveR[m.id]){ S.recepten=S.recepten.map(function(x){return x.id===m.id?m:x;}); updR++; return; }
+      if(!m.id) m.id=uid(); haveR[m.id]=1; S.recepten.push(m); addedR++;
     });
     rb.forEach(function(r){
-      if(r.id && haveB[r.id]){ skipped++; return; }
-      var m=Object.assign({},r); if(!m.id) m.id=uid(); m.updatedAt=Date.now(); haveB[m.id]=1;
-      S.rubs.push(m); addedB++;
+      var m=Object.assign({},r); m.updatedAt=Date.now();
+      if(m.id && haveB[m.id]){ S.rubs=S.rubs.map(function(x){return x.id===m.id?m:x;}); updB++; return; }
+      if(!m.id) m.id=uid(); haveB[m.id]=1; S.rubs.push(m); addedB++;
     });
     sd.forEach(function(r){
-      if(r.id && haveS[r.id]){ skipped++; return; }
-      var m=migrateSide(r); if(!m.id) m.id=uid(); m.updatedAt=Date.now(); haveS[m.id]=1;
-      S.sides.push(m); addedS++;
+      var m=migrateSide(r); m.updatedAt=Date.now();
+      if(m.id && haveS[m.id]){ S.sides=S.sides.map(function(x){return x.id===m.id?m:x;}); updS++; return; }
+      if(!m.id) m.id=uid(); haveS[m.id]=1; S.sides.push(m); addedS++;
     });
     sa.forEach(function(r){
-      if(r.id && haveSA[r.id]){ skipped++; return; }
-      var m=migrateSauce(r); if(!m.id) m.id=uid(); m.updatedAt=Date.now(); haveSA[m.id]=1;
-      S.sauzen.push(m); addedSA++;
+      var m=migrateSauce(r); m.updatedAt=Date.now();
+      if(m.id && haveSA[m.id]){ S.sauzen=S.sauzen.map(function(x){return x.id===m.id?m:x;}); updSA++; return; }
+      if(!m.id) m.id=uid(); haveSA[m.id]=1; S.sauzen.push(m); addedSA++;
     });
-    if(addedR) saveRecepten();
-    if(addedB) saveRubs();
-    if(addedS) saveSides();
-    if(addedSA) saveSauzen();
-    if(addedR||addedB||addedS||addedSA) touch();
-    alert("Toegevoegd: "+addedR+" cooks, "+addedB+" rubs, "+addedS+" bijgerechten en "+addedSA+" sauzen."+(skipped? " "+skipped+" overgeslagen (stonden er al in).":""));
+    if(addedR||updR) saveRecepten();
+    if(addedB||updB) saveRubs();
+    if(addedS||updS) saveSides();
+    if(addedSA||updSA) saveSauzen();
+    if(addedR||addedB||addedS||addedSA||updR||updB||updS||updSA) touch();
+    var upd=updR+updB+updS+updSA;
+    alert("Toegevoegd: "+addedR+" cooks, "+addedB+" rubs, "+addedS+" bijgerechten en "+addedSA+" sauzen."+(upd? " Bijgewerkt: "+updR+" cooks, "+updB+" rubs, "+updS+" bijgerechten en "+updSA+" sauzen.":""));
     render();
   });
 }
