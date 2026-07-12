@@ -1124,12 +1124,11 @@ function simpleDetail(cfg){
 
     if(Number(r.porties)>0 && ings.some(function(i){return i.hoeveelheid;})){
       var calcRes=el("div");
-      var calcIn=el("input",{type:"number",min:"0",step:"1",value:r.porties,placeholder:"bijv. "+(Number(r.porties)*2)});
+      var calcIn=el("input",{type:"number",min:"0",step:"1",placeholder:"bijv. "+(Number(r.porties)*2)});
       function recalc(){ clear(calcRes); var n=Number(calcIn.value); if(n>0) calcRes.appendChild(scaledSideIngredients(r,n,true)); }
       calcIn.addEventListener("input",recalc);
       var calcTitle=el("span",{style:{display:"flex",alignItems:"center",gap:"6px"}}, raw(ic("calculator",13)), " Omrekenen naar aantal personen");
       wrap.appendChild(block(calcTitle, [ el("div",{class:"vb-calc"}, el("span",{},"Bereken voor"), calcIn, el("span",{},"personen")), calcRes ]));
-      recalc();
     }
   }
   if(r.beschrijving){ var d=block("Beschrijving", el("p",{class:"vb-notes"},r.beschrijving)); if(!ings.length) d.style.marginTop="14px"; wrap.appendChild(d); }
