@@ -249,6 +249,23 @@ input:focus-visible,textarea:focus-visible,select:focus-visible,.vb-btn:focus-vi
 .vb-sync-field .vb-btn{height:46px;border-radius:23px;flex:none;}
 .vb-h2s{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--coals);margin:24px 0 8px;}
 
+/* ---- planner (cook-detail) ---- */
+.vb-plan-lbl{width:76px;flex:none;}
+.vb-calc input[type=time]{width:118px;text-align:left;}
+.vb-plan-res{margin-top:4px;}
+.vb-plan-time{margin-left:auto;font-weight:700;font-size:13px;white-space:nowrap;}
+.vb-plan-ic{color:var(--coals);display:inline-flex;line-height:0;}
+
+/* ---- statistieken ---- */
+.vb-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 10px;}
+.vb-bar-row{margin-bottom:10px;}
+.vb-bar-row:last-child{margin-bottom:0;}
+.vb-bar-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:12.5px;margin-bottom:4px;}
+.vb-bar-top .vb-muted{font-size:11.5px;white-space:nowrap;flex:none;}
+.vb-bar-track{height:8px;border-radius:4px;background:var(--sc-high);}
+.vb-bar-fill{height:8px;border-radius:4px;background:var(--coals);}
+.vb-stat-sub{color:var(--on-var);font-size:12.5px;width:100%;}
+
 @media (max-width:380px){.vb-card-stats .vb-stat{gap:4px;}.vb-gauge-val{font-size:26px;}}
 </style>
 </head>
@@ -312,7 +329,8 @@ var IC = {
   settings:"<circle cx='12' cy='12' r='3'/><path d='M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z'/>",
   download:"<path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/><polyline points='7 10 12 15 17 10'/><line x1='12' x2='12' y1='15' y2='3'/>",
   upload:"<path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/><polyline points='17 8 12 3 7 8'/><line x1='12' x2='12' y1='3' y2='15'/>",
-  refresh:"<polyline points='23 4 23 10 17 10'/><polyline points='1 20 1 14 7 14'/><path d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15'/>"
+  refresh:"<polyline points='23 4 23 10 17 10'/><polyline points='1 20 1 14 7 14'/><path d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15'/>",
+  chart:"<path d='M3 3v16a2 2 0 0 0 2 2h16'/><path d='M18 17V9'/><path d='M13 17V5'/><path d='M8 17v-3'/>"
 };
 function ic(name, size, fill){
   size = size||24; fill = fill||"none";
@@ -357,6 +375,21 @@ function heatEdge(pit){ var c=heatCalc(pit); if(!c) return "#47443D"; return "li
 function heatLabel(t){ var v=Number(t); if(!v||isNaN(v)) return ""; if(v<130) return "Low & slow"; if(v<200) return "Indirect garen"; if(v<270) return "Grillen"; return "Searen / pizza"; }
 function toGrams(val,eu){ var n=Number(val); if(!n||isNaN(n)) return 0; return eu==="kg"? n*1000 : n; }
 function fmtAmount(v){ if(v==null||isNaN(v)) return ""; var r; if(v>=10) r=Math.round(v); else if(v>=1) r=Math.round(v*10)/10; else r=Math.round(v*100)/100; return r.toLocaleString("nl-NL",{maximumFractionDigits:2}); }
+/* vrije tekst-duur ("12 uur", "1,5 uur", "1 uur 30 min", "12-14 uur") → minuten, of null bij onleesbare input */
+function parseDuur(str){
+  if(str==null) return null;
+  var s=String(str).toLowerCase().replace(/,/g,".").trim();
+  if(!s) return null;
+  /* bereik ("12-14 uur", "12 à 14 uur") → gemiddelde van beide grenzen */
+  var b=s.match(/^(\d+(?:\.\d+)?)\s*(?:-|–|à|a)\s*(\d+(?:\.\d+)?)\s*(uren|uur|u|h|minuten|min|m)\.?$/);
+  if(b){ var avg=(parseFloat(b[1])+parseFloat(b[2]))/2; return Math.round(/^(u|uur|uren|h)$/.test(b[3]) ? avg*60 : avg); }
+  /* losse delen optellen: "1 uur 30 min" → 90; kaal getal zonder eenheid is te ambigu → null */
+  var tot=0, any=false, re=/(\d+(?:\.\d+)?)\s*(uren|uur|u|h|minuten|min|m)\b/g, p;
+  while((p=re.exec(s))){ var n=parseFloat(p[1]); if(isNaN(n)) continue; tot+=/^(u|uur|uren|h)$/.test(p[2])? n*60 : n; any=true; }
+  return any? Math.round(tot) : null;
+}
+/* minuten → "1 u 25 min" / "45 min" / "2 u" */
+function fmtDuur(min){ min=Math.round(min); var u=Math.floor(min/60), m=min%60; if(u&&m) return u+" u "+m+" min"; if(u) return u+" u"; return m+" min"; }
 function formatDate(iso){ try{ return new Date(iso+"T00:00:00").toLocaleDateString("nl-NL",{day:"numeric",month:"long",year:"numeric"}); }catch(e){ return iso; } }
 function finalKern(fases){ var f=(fases||[]).filter(function(p){return p.mode!=="tijd" && p.temp;}); return f.length? Number(f[f.length-1].temp) : null; }
 function faseTijd(p){ var u=Number(p.uur)||0, m=Number(p.min)||0; if(!u&&!m) return ""; var s=[]; if(u) s.push(u+" u"); if(m) s.push(m+" min"); return s.join(" "); }
@@ -528,6 +561,7 @@ function subTitle(){
     case "cook-detail": return "Cook";
     case "rub-detail": return "Rub";
     case "settings": return "Instellingen";
+    case "stats": return "Statistieken";
   }
   if(cfg && S.screen===cfg.formScreen) return S[cfg.draftKey].id ? "Bewerken" : cfg.nieuw;
   if(cfg && S.screen===cfg.detailScreen) return cfg.soort;
@@ -535,7 +569,7 @@ function subTitle(){
 }
 function goBack(){
   var s=S.screen, cfg=SCREEN_CFG[s];
-  if(s==="settings") S.screen=S.prevTab;
+  if(s==="settings"||s==="stats") S.screen=S.prevTab;
   else if(s==="cook-form") S.screen=S.draft.id?"cook-detail":"cooks";
   else if(s==="rub-form") S.screen=S.rubDraft.id?"rub-detail":"rubs";
   else if(s==="cook-detail") S.screen="cooks";
@@ -553,6 +587,7 @@ function header(){
   inner.appendChild(raw(LOGO));
   inner.appendChild(el("div",{class:"vb-brand"}, el("span",{class:"vb-brand-name"},"Pitkeeper"), el("span",{class:"vb-brand-sub"},"BBQ receptenlogboek")));
   if(SY.token){ var sb=iconBtn("refresh","Nu synchroniseren",function(){ syncNow(true); }); sb.id="vb-sync-btn"; if(SY.busy) sb.classList.add("vb-spin"); inner.appendChild(sb); }
+  inner.appendChild(iconBtn("chart","Statistieken",function(){ S.prevTab=S.screen; S.screen="stats"; render(); }));
   inner.appendChild(iconBtn("settings","Instellingen",function(){ S.prevTab=S.screen; S.screen="settings"; render(); }));
   return el("header",{class:"vb-top"}, inner);
 }
@@ -607,13 +642,18 @@ function cookList(){
     f.houtskool=f.houtskool.filter(function(v){return kolen.indexOf(v)>-1;});
     f.rookhout=f.rookhout.filter(function(v){return houts.indexOf(v)>-1;});
     function tempMatch(t,p){ if(t==="low") return !!(p&&p<130); if(t==="mid") return p>=130&&p<=200; if(t==="high") return p>200; return false; }
+    /* rubnaam-lookup één keer per draw, niet per cook */
+    var rubNaam={}; S.rubs.forEach(function(x){ rubNaam[x.id]=x.naam; });
     var list = S.recepten.filter(function(r){
       if(f.cat.length && f.cat.indexOf(r.soortVlees)===-1) return false;
       if(f.methode.length && f.methode.indexOf(r.methode)===-1) return false;
       if(f.temp.length){ var p=Number(effPit(r)); if(!f.temp.some(function(t){return tempMatch(t,p);})) return false; }
       if(f.houtskool.length && f.houtskool.indexOf(r.houtskool)===-1) return false;
       if(f.rookhout.length && !f.rookhout.some(function(w){ return (r.rookhout||[]).indexOf(w)>-1; })) return false;
-      if(q && [r.naam,r.soortVlees,r.houtskool,(r.rookhout||[]).join(" ")].filter(Boolean).join(" ").toLowerCase().indexOf(q)===-1) return false;
+      if(q){
+        var rubTxt = r.rubRef==="__custom__" ? r.rubMarinade : rubNaam[r.rubRef];
+        if([r.naam,r.soortVlees,r.houtskool,(r.rookhout||[]).join(" "),r.notities,rubTxt].filter(Boolean).join(" ").toLowerCase().indexOf(q)===-1) return false;
+      }
       return true;
     });
     list=applySort(list,S.sortCook);
@@ -635,7 +675,7 @@ function cookList(){
   }
   if(S.recepten.length>0){
     var row=el("div",{class:"vb-searchrow"});
-    row.appendChild(searchBar("Zoek op naam, houtskool…", draw));
+    row.appendChild(searchBar("Zoek op naam, rub, notities…", draw));
     row.appendChild(el("button",{class:"vb-filterbtn"+(anyFilter()?" on":""),"aria-label":"Filteren en sorteren",onClick:function(){ S.sheet=true; render(); }}, raw(ic("filter",22))));
     wrap.appendChild(row);
     wrap.appendChild(el("div",{class:"vb-legend"}, el("span",{},"Laag"), el("span",{class:"vb-legend-bar"}), el("span",{},"Hoog · Temperatuur")));
@@ -738,7 +778,7 @@ function rubList(){
     var q=S.query.trim().toLowerCase(), f=S.fltRub;
     var list = S.rubs.filter(function(r){
       if(f.type.length && f.type.indexOf(r.type)===-1) return false;
-      if(q && [r.naam,r.type].concat((r.ingredienten||[]).map(function(i){return i.naam;})).filter(Boolean).join(" ").toLowerCase().indexOf(q)===-1) return false;
+      if(q && [r.naam,r.type,r.notities].concat((r.ingredienten||[]).map(function(i){return i.naam;})).filter(Boolean).join(" ").toLowerCase().indexOf(q)===-1) return false;
       return true;
     });
     list=applySort(list,S.sortRub);
@@ -1047,6 +1087,45 @@ function simpleForm(cfg){
 }
 
 /* ===================== COOK-DETAIL (§19) ===================== */
+/* terugrekenplanner: van "klaar om" terug naar aansteekmoment — vluchtig (niets opslaan/syncen),
+   rekent in minuten sinds middernacht om DST-gedoe te vermijden */
+function plannerBlock(r){
+  var gaarMin=parseDuur(r.gaartijd), rustMin=parseDuur(r.rusttijd);
+  var res=el("div");
+  var klaar=el("input",{type:"time","aria-label":"Klaar om"});
+  klaar.addEventListener("input",recalc);
+  function duurPair(mins){
+    var u=el("input",{type:"number",min:"0",value:mins==null?"":String(Math.floor(mins/60)),"aria-label":"uren"});
+    var m=el("input",{type:"number",min:"0",value:mins==null?"":String(mins%60),"aria-label":"minuten"});
+    u.addEventListener("input",recalc); m.addEventListener("input",recalc);
+    return {u:u,m:m,
+      leeg:function(){ return !String(u.value).trim() && !String(m.value).trim(); },
+      min:function(){ return (Number(u.value)||0)*60+(Number(m.value)||0); }};
+  }
+  var gaar=duurPair(gaarMin), rust=duurPair(rustMin), stook=duurPair(45);
+  function duurRij(lbl,p){ return el("div",{class:"vb-calc"}, el("span",{class:"vb-plan-lbl"},lbl), p.u, el("span",{},"u"), p.m, el("span",{},"min")); }
+  function fmtKlok(min){ var mm=((min%1440)+1440)%1440, h=Math.floor(mm/60), m2=mm%60; return (h<10?"0":"")+h+":"+(m2<10?"0":"")+m2; }
+  function recalc(){
+    clear(res);
+    if(!klaar.value || gaar.leeg() || gaar.min()<=0) return;
+    var p=klaar.value.split(":"), einde=Number(p[0])*60+Number(p[1]);
+    var vanBbq=einde-rust.min(), erop=vanBbq-gaar.min(), aan=erop-stook.min();
+    var ol=el("ol",{class:"vb-fase-list vb-plan-res"});
+    [["Aansteken",aan,1],["Vlees erop",erop],["Van de bbq",vanBbq],["Klaar",einde]].forEach(function(row){
+      var li=el("li",{});
+      if(row[2]) li.appendChild(el("span",{class:"vb-plan-ic"},raw(ic("flame",15,"currentColor"))));
+      li.appendChild(el("span",{class:"vb-fase-list-temp"},row[0]));
+      li.appendChild(el("span",{class:"vb-plan-time"}, fmtKlok(row[1])+(row[1]<0?" (dag ervoor)":"")));
+      ol.appendChild(li);
+    });
+    res.appendChild(ol);
+  }
+  var body=[el("div",{class:"vb-calc"}, el("span",{class:"vb-plan-lbl"},"Klaar om"), klaar)];
+  if(r.gaartijd && gaarMin==null) body.push(el("p",{class:"vb-hint vb-soft"},"Gaartijd kon niet automatisch worden gelezen — vul hem hieronder in."));
+  body.push(duurRij("Gaartijd",gaar), duurRij("Rusttijd",rust), duurRij("Opstoken",stook), res);
+  var title=el("span",{style:{display:"flex",alignItems:"center",gap:"6px"}}, raw(ic("clock",13)), " Planner");
+  return block(title, body);
+}
 function cookDetail(){
   var r=S.recepten.filter(function(x){return x.id===S.selCook;})[0];
   if(!r) return el("p",{class:"vb-muted vb-center"},"Niet gevonden.");
@@ -1071,6 +1150,8 @@ function cookDetail(){
   if(r.porties) rows.push(["Porties",r.porties,"users"]);
   if(r.gewicht) rows.push(["Gewicht",fmtAmount(r.gewicht)+" "+r.gewichtEenheid,"scale"]);
   if(rows.length){ var dl=el("dl",{class:"vb-specs"}); rows.forEach(function(row){ var dt=el("dt",{}); dt.appendChild(row[2]==="coal"?el("span",{class:"vb-coal"}):el("span",{class:"vb-spec-ic"},raw(ic(row[2],15)))); dt.appendChild(document.createTextNode(" "+row[0])); dl.appendChild(el("div",{class:"vb-spec"}, dt, el("dd",{},row[1]))); }); wrap.appendChild(dl); }
+
+  wrap.appendChild(plannerBlock(r));
 
   if(r.notities) wrap.appendChild(block("Notities & volgende keer", el("p",{class:"vb-notes"},r.notities)));
 
@@ -1147,6 +1228,92 @@ function deleteRow(label, onDelete){
   function showLink(){ clear(box); box.appendChild(el("button",{class:"vb-del-link",onClick:showConfirm}, raw(ic("trash",14)), " Verwijderen")); }
   function showConfirm(){ clear(box); box.appendChild(el("div",{class:"vb-del-confirm"}, el("span",{},label), el("div",{}, btn("vb-btn vb-btn-ghost",null,"Nee",showLink), btn("vb-btn vb-btn-danger",null,"Verwijderen",onDelete)))); }
   showLink(); return box;
+}
+
+/* ===================== STATISTIEKEN ===================== */
+/* gemiddelde beoordeling van een set cooks — alleen cooks met beoordeling > 0, anders null */
+function gemBeoordeling(cooks){ var rated=cooks.filter(function(x){return Number(x.beoordeling)>0;}); if(!rated.length) return null; return rated.reduce(function(n,x){return n+Number(x.beoordeling);},0)/rated.length; }
+function fmtGem(v){ return v.toLocaleString("nl-NL",{minimumFractionDigits:1,maximumFractionDigits:1}); }
+/* horizontale telbalkjes — breedte relatief aan de hoogste telling */
+function barList(items){
+  var max=items.reduce(function(m,i){return Math.max(m,i.count);},0)||1;
+  var wrap=el("div");
+  items.forEach(function(i){
+    var meta=i.count+(i.count===1?" cook":" cooks"); if(i.gem!=null) meta+=" · gem. "+fmtGem(i.gem);
+    wrap.appendChild(el("div",{class:"vb-bar-row"},
+      el("div",{class:"vb-bar-top"}, el("span",{},i.label), el("span",{class:"vb-muted"},meta)),
+      el("div",{class:"vb-bar-track"}, el("div",{class:"vb-bar-fill",style:{width:Math.round(i.count/max*100)+"%"}}))));
+  });
+  return wrap;
+}
+/* alles wordt berekend bij het openen van het scherm; geen caching, geen opslag */
+function statsScreen(){
+  var wrap=el("div",{style:{paddingTop:"6px"}});
+  if(S.recepten.length===0){
+    wrap.appendChild(emptyState("chart","Nog geen statistieken","Log je eerste cook — daarna zie je hier totalen, gemiddelden en je favoriete rookhout.","Eerste cook toevoegen",function(){ S.draft=blankRecipe(); S.screen="cook-form"; render(); }));
+    return wrap;
+  }
+  /* totalen + hoogst beoordeelde cook */
+  var grid=el("div",{class:"vb-stats-grid"});
+  [["Cooks",S.recepten.length],["Rubs",S.rubs.length],["Sides",S.sides.length],["Sauzen",S.sauzen.length]].forEach(function(t){
+    grid.appendChild(el("div",{class:"vb-gauge"}, el("span",{class:"vb-gauge-lbl"},t[0]), el("span",{class:"vb-gauge-val"},String(t[1]))));
+  });
+  var totBody=[grid], best=null;
+  S.recepten.forEach(function(x){ if(Number(x.beoordeling)>0 && (!best || Number(x.beoordeling)>Number(best.beoordeling))) best=x; });
+  if(best){
+    var bb=el("button",{class:"vb-card",onClick:function(){ S.selCook=best.id; S.screen="cook-detail"; render(); }});
+    bb.appendChild(el("div",{class:"vb-card-body",style:{display:"flex",alignItems:"center",gap:"10px",padding:"12px 14px"}},
+      el("div",{class:"vb-card-txt"}, el("h3",{},best.naam), el("p",{class:"vb-card-meat"},"Hoogst beoordeeld · "+best.soortVlees)),
+      flames(Number(best.beoordeling),false,16)));
+    totBody.push(bb);
+  }
+  wrap.appendChild(block("Totalen", totBody));
+  /* per categorie: aantal, gem. beoordeling en gaartijd per kg (alleen cooks met leesbare tijd én gewicht) */
+  var cats=catsUsed();
+  if(cats.length){
+    var ul=el("ul",{class:"vb-fase-list"});
+    cats.forEach(function(cat){
+      var cooks=S.recepten.filter(function(x){return x.soortVlees===cat;});
+      var li=el("li",{}, el("span",{class:"vb-fase-list-temp"},cat), el("span",{class:"vb-plan-time"},cooks.length+(cooks.length===1?" cook":" cooks")));
+      var sub=[], gem=gemBeoordeling(cooks);
+      if(gem!=null) sub.push("gem. beoordeling "+fmtGem(gem));
+      var kgN=0, kgTot=0;
+      cooks.forEach(function(x){ var min=parseDuur(x.gaartijd), g=toGrams(x.gewicht,x.gewichtEenheid); if(min&&g>0){ kgN++; kgTot+=min/(g/1000); } });
+      if(kgN) sub.push("≈ "+fmtDuur(kgTot/kgN)+" / kg ("+kgN+(kgN===1?" cook":" cooks")+")");
+      if(sub.length) li.appendChild(el("span",{class:"vb-stat-sub"},sub.join(" · ")));
+      ul.appendChild(li);
+    });
+    wrap.appendChild(block("Per categorie", ul));
+  }
+  /* rookhout & houtskool: telling + gem. beoordeling van de cooks waarin gebruikt */
+  function telOp(getVals){
+    var map={}, order=[];
+    S.recepten.forEach(function(x){ getVals(x).forEach(function(v){ v=String(v).trim(); if(!v) return; var k=v.toLowerCase(); if(!map[k]){ map[k]={label:v,cooks:[]}; order.push(k); } map[k].cooks.push(x); }); });
+    return order.map(function(k){ var e=map[k]; return {label:e.label,count:e.cooks.length,gem:gemBeoordeling(e.cooks)}; })
+      .sort(function(a,b){ return b.count-a.count || a.label.localeCompare(b.label); });
+  }
+  var hout=telOp(function(x){ return Array.isArray(x.rookhout)?x.rookhout:[]; });
+  if(hout.length) wrap.appendChild(block("Rookhout", barList(hout)));
+  var kolen=telOp(function(x){ return x.houtskool?[x.houtskool]:[]; });
+  if(kolen.length) wrap.appendChild(block("Houtskool", barList(kolen)));
+  /* rubs in de praktijk: alleen rubs die minstens één keer gekoppeld zijn */
+  var rubItems=[];
+  S.rubs.forEach(function(rb){
+    var cooks=S.recepten.filter(function(x){return x.rubRef===rb.id;});
+    if(cooks.length) rubItems.push({rub:rb,cooks:cooks});
+  });
+  if(rubItems.length){
+    rubItems.sort(function(a,b){ return b.cooks.length-a.cooks.length || byName(a.rub,b.rub); });
+    var rul=el("ul",{class:"vb-fase-list"});
+    rubItems.forEach(function(it){
+      var gem=gemBeoordeling(it.cooks);
+      var li=el("li",{}, el("span",{class:"vb-fase-list-temp"},it.rub.naam), el("span",{class:"vb-plan-time"},it.cooks.length+(it.cooks.length===1?" cook":" cooks")));
+      li.appendChild(el("span",{class:"vb-stat-sub"}, gem!=null? "gem. beoordeling "+fmtGem(gem) : "nog geen beoordeling"));
+      rul.appendChild(li);
+    });
+    wrap.appendChild(block("Rubs in de praktijk", rul));
+  }
+  return wrap;
 }
 
 /* ===================== INSTELLINGEN (§24) ===================== */
@@ -1324,7 +1491,7 @@ function syncNow(manual){
     if(SY.queued){ SY.queued=false; updateSyncUI(); syncNow(); return; }
     var changed=JSON.stringify([S.recepten,S.rubs,S.sides,S.sauzen])!==before;
     /* render(true): scrollpositie behouden — dit is een verversing op de achtergrond, geen navigatie */
-    if(changed && ["cooks","rubs","sides","sauzen","cook-detail","rub-detail","side-detail","sauce-detail","settings"].indexOf(S.screen)>-1) render(true);
+    if(changed && ["cooks","rubs","sides","sauzen","cook-detail","rub-detail","side-detail","sauce-detail","settings","stats"].indexOf(S.screen)>-1) render(true);
     else updateSyncUI();
   });
 }
@@ -1353,6 +1520,7 @@ function render(keepScroll){
     case "cook-detail": body=cookDetail(); break;
     case "rub-detail": body=rubDetail(); break;
     case "settings": body=settings(); break;
+    case "stats": body=statsScreen(); break;
     default:
       if(cfg && S.screen===cfg.formScreen) body=simpleForm(cfg);
       else if(cfg && S.screen===cfg.detailScreen) body=simpleDetail(cfg);
