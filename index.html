@@ -1106,6 +1106,7 @@ function plannerBlock(r){
   function duurRij(lbl,p){ return el("div",{class:"vb-calc"}, el("span",{class:"vb-plan-lbl"},lbl), p.u, el("span",{},"u"), p.m, el("span",{},"min")); }
   function fmtKlok(min){ var mm=((min%1440)+1440)%1440, h=Math.floor(mm/60), m2=mm%60; return (h<10?"0":"")+h+":"+(m2<10?"0":"")+m2; }
   function recalc(){
+    extra.hidden=!klaar.value;
     clear(res);
     if(!klaar.value || gaar.leeg() || gaar.min()<=0) return;
     var p=klaar.value.split(":"), einde=Number(p[0])*60+Number(p[1]);
@@ -1120,9 +1121,11 @@ function plannerBlock(r){
     });
     res.appendChild(ol);
   }
-  var body=[el("div",{class:"vb-calc"}, el("span",{class:"vb-plan-lbl"},"Klaar om"), klaar)];
-  if(r.gaartijd && gaarMin==null) body.push(el("p",{class:"vb-hint vb-soft"},"Gaartijd kon niet automatisch worden gelezen — vul hem hieronder in."));
-  body.push(duurRij("Gaartijd",gaar), duurRij("Rusttijd",rust), duurRij("Opstoken",stook), res);
+  /* alleen "Klaar om" is zichtbaar; de overige velden verschijnen pas als dat is ingevuld */
+  var extra=el("div",{hidden:true});
+  if(r.gaartijd && gaarMin==null) extra.appendChild(el("p",{class:"vb-hint vb-soft"},"Gaartijd kon niet automatisch worden gelezen — vul hem hieronder in."));
+  [duurRij("Gaartijd",gaar), duurRij("Rusttijd",rust), duurRij("Opstoken",stook), res].forEach(function(n){ extra.appendChild(n); });
+  var body=[el("div",{class:"vb-calc"}, el("span",{class:"vb-plan-lbl"},"Klaar om"), klaar), extra];
   var title=el("span",{style:{display:"flex",alignItems:"center",gap:"6px"}}, raw(ic("clock",13)), " Planner");
   return block(title, body);
 }
