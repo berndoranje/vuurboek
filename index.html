@@ -3,188 +3,198 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#151412">
+<meta name="theme-color" content="#121110">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Pitkeeper">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='22' fill='%23151412' stroke='%23E9A63C' stroke-width='2'/><path d='M24 12c1 4.4 4.4 6.6 6.6 9.2 2.2 2.6 3 5 3 7.4a9.6 9.6 0 1 1-19.2 0c0-1.7.7-3.5 1.8-4.7a3.9 3.9 0 0 0 3.9 3.9 3.9 3.9 0 0 0 3.9-3.9c0-2.1-.9-3-1.6-4.6C21.3 16.2 21.6 13.3 24 12z' fill='%23E9A63C'/><path d='M24 21.5c.7 1.7 2.2 2.6 2.2 4.5A2.2 2.2 0 0 1 24 28.2a2.2 2.2 0 0 1-2.2-2.4c0-1 .4-1.6.9-2.3.5-.8.8-1.5 1.3-2z' fill='%238A3410'/></svg>">
-<title>Pitkeeper — BBQ receptenlogboek</title>
+<meta name="apple-mobile-web-app-title" content="pitkeeper">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23FFD34D'/><stop offset='1' stop-color='%23FF9210'/></linearGradient><radialGradient id='r' cx='50%25' cy='125%25' r='80%25'><stop offset='0' stop-color='%23FF9210' stop-opacity='.28'/><stop offset='.7' stop-color='%23FF9210' stop-opacity='0'/></radialGradient></defs><rect x='.5' y='.5' width='63' height='63' rx='14.5' fill='%231B1917' stroke='%2335312C'/><rect x='.5' y='.5' width='63' height='63' rx='14.5' fill='url(%23r)'/><g transform='translate(14,14) scale(0.5625)'><rect x='12' y='26' width='10' height='26' rx='5' fill='url(%23g)'/><rect x='27' y='10' width='10' height='42' rx='5' fill='url(%23g)'/><rect x='42' y='20' width='10' height='32' rx='5' fill='url(%23g)'/></g></svg>">
+<title>pitkeeper — BBQ receptenlogboek</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400;8..144,500;8..144,600;8..144,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{overscroll-behavior:none;color-scheme:dark;
-  /* Pitkeeper — Material 3 dark tokens (ontwikkeldocument §3) */
-  --surface:#151412;--sc-low:#1F1E1B;--sc:#242320;--sc-high:#2E2D29;
-  --on:#EAE8E1;--on-var:#C9C5BB;--outline:#918D83;--outline-var:#47443D;
-  --primary:#8A3410;--on-primary:#FFDBCB;--secondary:#4C3B2F;--on-secondary:#F0DCCC;
-  --coals:#E9A63C;--error:#F0A96B;
-  --chev:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23C9C5BB' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  /* Pitkeeper huisstijl v1.0 — "de Gloedmeter" (design handoff, juli 2026) */
+  --surface:#121110;--sc-low:#1B1917;--sc:#1B1917;--sc-high:#35312C;
+  --on:#F2EFE9;--on-var:#A39D93;--dim:#6E685F;--outline:#47433C;--outline-var:#2C2925;
+  --ember:#FF9210;--gloed:#FFD34D;--deep:#A63D22;--on-accent:#171310;--error:#C9603F;
+  --grad:linear-gradient(160deg,#FFD34D,#FF9210);
+  --mono:'IBM Plex Mono',monospace;
+  --chev:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23A39D93' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
   background:var(--surface);color:var(--on);
-  font-family:'Roboto Flex',Roboto,system-ui,sans-serif;
+  font-family:'Space Grotesk',system-ui,sans-serif;
   min-height:100vh;-webkit-font-smoothing:antialiased;}
 svg{display:block;}
+::selection{background:var(--ember);color:var(--on-accent);}
 .vb-main{max-width:600px;margin:0 auto;padding:2px 16px 40px;}
-.vb-main.tabbed{padding-bottom:172px;}
+.vb-main.tabbed{padding-bottom:160px;}
 
 /* ---- topbar (§8.1) ---- */
 .vb-top{position:sticky;top:0;z-index:10;background:var(--surface);}
-.vb-top-inner{max-width:600px;margin:0 auto;height:62px;display:flex;align-items:center;padding:0 6px 0 16px;}
-.vb-logo{width:34px;height:34px;margin-right:11px;flex:none;}
+.vb-top-inner{max-width:600px;margin:0 auto;height:62px;display:flex;align-items:center;gap:8px;padding:0 16px;}
+.vb-logo{width:26px;height:26px;margin-right:2px;flex:none;}
 .vb-brand{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.1;}
-.vb-brand-name{font-size:22px;font-weight:700;color:var(--on);}
-.vb-brand-sub{font-size:11px;font-weight:500;color:var(--on-var);margin-top:1px;}
-.vb-icon-btn{display:grid;place-items:center;width:46px;height:46px;border:none;background:none;color:var(--on-var);border-radius:23px;cursor:pointer;flex:none;}
+.vb-brand-name{font-size:18px;font-weight:700;letter-spacing:-0.02em;color:var(--on);}
+.vb-brand-sub{font-family:var(--mono);font-size:8.5px;font-weight:400;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin-top:2px;}
+.vb-icon-btn{display:grid;place-items:center;width:34px;height:34px;border:1px solid var(--outline-var);background:var(--sc);color:var(--on-var);border-radius:17px;cursor:pointer;flex:none;padding:0;}
 .vb-icon-btn:hover{background:var(--sc-high);}
 /* ---- sub-scherm appbar (§16) ---- */
-.vb-subbar{max-width:600px;margin:0 auto;height:62px;display:flex;align-items:center;gap:4px;padding:0 16px 0 6px;font-size:19px;font-weight:700;}
+.vb-subbar{max-width:600px;margin:0 auto;height:62px;display:flex;align-items:center;gap:10px;padding:0 16px;font-size:19px;font-weight:700;letter-spacing:-0.02em;}
 .vb-subbar .vb-icon-btn{color:var(--on);}
 
 .vb-icon-btn:focus-visible,.vb-card:focus-visible,.vb-seg-btn:focus-visible,.vb-tab:focus-visible,.vb-fab:focus-visible,
-input:focus-visible,textarea:focus-visible,select:focus-visible,.vb-btn:focus-visible,.vb-chip:focus-visible{outline:2px solid var(--coals);outline-offset:2px;}
+input:focus-visible,textarea:focus-visible,select:focus-visible,.vb-btn:focus-visible,.vb-chip:focus-visible{outline:2px solid var(--ember);outline-offset:2px;}
 .vb-muted{color:var(--on-var);}.vb-center{text-align:center;padding:40px 0;font-size:13px;}
 
-/* ---- navigatiebalk (§8.6) ---- */
-.vb-tabs{position:fixed;bottom:0;left:0;right:0;z-index:10;background:var(--sc);padding-bottom:env(safe-area-inset-bottom);}
-.vb-tabs-inner{max-width:600px;margin:0 auto;height:78px;display:flex;align-items:flex-start;padding-top:12px;}
-.vb-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;border:none;background:none;padding:0;color:var(--on-var);cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;}
-.vb-ind{width:62px;height:32px;border-radius:16px;display:flex;align-items:center;justify-content:center;}
-.vb-tab.on .vb-ind{background:var(--primary);color:var(--on-primary);}
-.vb-tab.on span{color:var(--on);}
+/* ---- navigatiebalk (§8.6): zwevend, labels-only ---- */
+.vb-tabs{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:18px;right:18px;z-index:10;}
+.vb-tabs-inner{max-width:600px;margin:0 auto;display:flex;background:var(--sc);border:1px solid var(--outline-var);border-radius:20px;padding:6px;}
+.vb-tab{flex:1;border:none;background:none;padding:10px 0;border-radius:14px;color:var(--on-var);cursor:pointer;font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;text-align:center;}
+.vb-tab.on{background:var(--ember);color:var(--on-accent);font-weight:600;}
 
 /* ---- FAB (§8.5) ---- */
-.vb-fab{position:fixed;z-index:11;width:56px;height:56px;border-radius:16px;border:none;display:flex;align-items:center;justify-content:center;background:var(--primary);color:var(--on-primary);cursor:pointer;box-shadow:0 6px 14px -4px rgba(0,0,0,.6);right:max(16px,calc(50% - 284px));bottom:calc(94px + env(safe-area-inset-bottom));}
+.vb-fab{position:fixed;z-index:11;width:52px;height:52px;border-radius:16px;border:none;display:flex;align-items:center;justify-content:center;background:var(--grad);color:var(--on-accent);cursor:pointer;box-shadow:0 10px 24px -8px rgba(255,146,16,.4);right:max(18px,calc(50% - 282px));bottom:calc(74px + env(safe-area-inset-bottom));}
+.vb-fab:hover{filter:brightness(1.08);}
 
 /* ---- zoekrij (§8.2) ---- */
-.vb-searchrow{display:flex;gap:10px;margin:12px 0;}
-.vb-search{flex:1;min-width:0;height:46px;display:flex;align-items:center;gap:12px;padding:0 16px;background:var(--sc);border:1px solid var(--outline-var);border-radius:23px;color:var(--on-var);}
-.vb-search input{flex:1;min-width:0;border:none;background:none;font-family:inherit;font-size:14px;color:var(--on);outline:none;}
-.vb-search input::placeholder{color:var(--on-var);opacity:.7;}
+.vb-searchrow{display:flex;gap:9px;margin:12px 0 9px;}
+.vb-search{flex:1;min-width:0;height:44px;display:flex;align-items:center;gap:10px;padding:0 16px;background:var(--sc);border:1px solid var(--outline-var);border-radius:22px;color:var(--dim);}
+.vb-search input{flex:1;min-width:0;border:none;background:none;font-family:inherit;font-size:14px;color:var(--on);outline:none;caret-color:var(--ember);}
+.vb-search input::placeholder{color:var(--dim);opacity:1;}
 .vb-clear{border:none;background:none;color:var(--on-var);cursor:pointer;display:grid;place-items:center;padding:0;}
-.vb-filterbtn{width:46px;height:46px;flex:none;border-radius:15px;display:flex;align-items:center;justify-content:center;background:var(--sc);border:1px solid var(--outline-var);color:var(--on);cursor:pointer;}
-.vb-filterbtn.on{background:var(--secondary);border-color:var(--secondary);color:var(--on-secondary);}
+.vb-filterbtn{width:44px;height:44px;flex:none;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3.5px;background:var(--sc);border:1px solid var(--outline-var);cursor:pointer;padding:0;}
+.vb-filterbtn i{display:block;height:2px;border-radius:1px;background:var(--on-var);}
+.vb-filterbtn i:nth-of-type(1){width:16px;}
+.vb-filterbtn i:nth-of-type(2){width:11px;}
+.vb-filterbtn i:nth-of-type(3){width:6px;}
+.vb-filterbtn.on{background:var(--ember);border-color:var(--ember);}
+.vb-filterbtn.on i{background:var(--on-accent);}
+/* samenvatting actieve filters + teller onder de zoekrij */
+.vb-filterline{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 2px 9px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);}
+.vb-filterline b{font-weight:500;color:var(--gloed);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.vb-filterline span{white-space:nowrap;flex:none;}
 
 /* ---- chips (§17) ---- */
 .vb-chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px;}
-.vb-chip{height:32px;display:inline-flex;align-items:center;gap:6px;padding:0 13px;border-radius:9px;border:1px solid var(--outline-var);background:var(--sc-low);color:var(--on-var);font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;white-space:nowrap;}
-.vb-chip.on{background:var(--secondary);border-color:var(--secondary);color:var(--on-secondary);}
+.vb-chip{height:32px;display:inline-flex;align-items:center;gap:6px;padding:0 13px;border-radius:8px;border:1px solid var(--outline-var);background:var(--sc);color:var(--on-var);font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;white-space:nowrap;}
+.vb-chip.on{background:var(--ember);border-color:var(--ember);color:var(--on-accent);font-weight:600;}
 
 /* ---- temperatuur-legenda (§8.3) ---- */
-.vb-legend{display:flex;align-items:center;gap:8px;margin:0 2px 12px;font-size:10.5px;color:var(--on-var);}
-.vb-legend-bar{height:6px;flex:1;border-radius:3px;background:linear-gradient(90deg,#F2B705,#E8651E,#C0341A);}
+.vb-legend{display:flex;align-items:center;gap:8px;margin:0 2px 12px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);}
+.vb-legend-bar{height:6px;flex:1;border-radius:3px;background:linear-gradient(90deg,#FFD34D,#FF9210,#A63D22);}
 
 /* ---- banner / statuskaart ---- */
-.vb-banner{background:#2A1713;border:1px solid #5A2A1A;color:var(--on);border-radius:12px;padding:12px 14px;font-size:12.5px;line-height:1.5;margin:12px 0 16px;}
+.vb-banner{background:var(--sc);border:1px solid var(--outline-var);color:var(--on);border-radius:12px;padding:12px 14px;font-size:12.5px;line-height:1.5;margin:12px 0 16px;}
 .vb-banner b{font-weight:600;}
 
 /* ---- lege staat (§17) ---- */
 .vb-empty{text-align:center;padding:40px 16px 32px;}
-.vb-empty-flame{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 16px;border-radius:32px;background:var(--sc-low);border:1px solid var(--outline-var);color:var(--coals);}
-.vb-empty h2{font-size:17px;font-weight:700;margin:0 0 6px;color:var(--on);}
+.vb-empty-flame{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 16px;border-radius:32px;background:var(--sc);border:1px solid var(--outline-var);color:var(--on-var);}
+.vb-empty h2{font-size:17px;font-weight:700;letter-spacing:-0.02em;margin:0 0 6px;color:var(--on);}
 .vb-empty p{color:var(--on-var);font-size:12.5px;margin:0 auto 18px;max-width:260px;line-height:1.5;}
 
 /* ---- cook-kaart (§8.4) ---- */
-.vb-cards{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;}
-.vb-card{position:relative;width:100%;display:block;text-align:left;background:var(--sc-low);border:1px solid var(--outline-var);border-radius:14px;overflow:hidden;cursor:pointer;padding:0;color:var(--on);font-family:inherit;}
-.vb-card:hover{background:var(--sc);}
-.vb-card-heat{position:absolute;left:0;top:0;bottom:0;width:5px;}
-.vb-card-body{padding:11px 14px 12px 18px;}
+.vb-cards{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px;}
+.vb-card{position:relative;width:100%;display:block;text-align:left;background:var(--sc);border:1px solid var(--outline-var);border-radius:13px;overflow:hidden;cursor:pointer;padding:0;color:var(--on);font-family:inherit;}
+.vb-card:hover{background:var(--sc-high);}
+.vb-card-heat{position:absolute;left:0;top:0;bottom:0;width:4px;}
+.vb-card-body{padding:10px 13px 9px 17px;}
 .vb-card-head{display:flex;align-items:flex-start;gap:10px;}
 .vb-card-txt{flex:1;min-width:0;}
-.vb-card-head h3{font-size:15px;font-weight:600;line-height:1.2;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.vb-card-meat{color:var(--on-var);font-size:12px;margin:1px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.vb-rating{flex:none;display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;color:var(--on-var);padding-top:1px;}
-.vb-rating-ic{color:var(--coals);display:inline-flex;line-height:0;}
-.vb-rating.none{opacity:.5;}
-.vb-rating.none .vb-rating-ic{color:var(--on-var);}
-.vb-div{height:1px;margin:9px 0 8px;background:var(--outline-var);}
-.vb-card-stats{display:flex;}
-.vb-stat{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:5px;}
-.vb-stat-ic{color:var(--coals);display:inline-flex;line-height:0;}
-.vb-stat-val{font-size:13px;font-weight:600;white-space:nowrap;}
-.vb-stat-lbl{font-size:9px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--on-var);}
+.vb-card-head h3{font-size:13.5px;font-weight:600;line-height:1.2;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.vb-card-meat{color:var(--on-var);font-size:11px;margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* kooltjes-beoordeling: gevuld = Ember(-gradiënt), leeg = As */
+.vb-rate{display:flex;align-items:center;gap:3.5px;flex:none;padding-top:3px;}
+.vb-rate.lg{gap:7px;padding-top:0;}
+.vb-dot{display:block;flex:none;border:none;padding:0;border-radius:50%;background:var(--outline-var);}
+.vb-dot.on{background:var(--ember);}
+.vb-rate.lg .vb-dot.on{background:var(--grad);}
+.vb-rate-card{display:flex;align-items:center;gap:14px;background:var(--sc);border:1px solid var(--outline-var);border-radius:13px;padding:14px 18px;margin-bottom:14px;}
+.vb-rate-card .vb-field-lbl{margin:0;}
+.vb-rate-val{margin-left:auto;font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--gloed);white-space:nowrap;}
+.vb-div{height:1px;margin:8px 0 7px;background:var(--outline-var);}
+.vb-card-stats{display:flex;font-family:var(--mono);}
+.vb-stat{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;}
+.vb-stat-val{font-size:11.5px;font-weight:600;color:var(--gloed);white-space:nowrap;}
+.vb-stat-lbl{font-size:8px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);}
 
 /* ---- rub-/side-kaart (§20) ---- */
 .vb-card-rub .vb-card-body{display:flex;align-items:center;gap:12px;padding:13px 14px;}
-.vb-rub-tag{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:6px;background:var(--secondary);color:var(--on-secondary);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;flex:none;}
-.vb-rub-tag.marinade{background:var(--primary);color:var(--on-primary);}
+.vb-rub-tag{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:7px;background:var(--outline-var);color:var(--on-var);font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;flex:none;}
+.vb-rub-tag.marinade{background:var(--ember);color:var(--on-accent);font-weight:600;}
 .vb-rub-tag.big{height:26px;padding:0 11px;font-size:11px;}
 
 /* ---- formuliercomponenten (§14) ---- */
 .vb-field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
-.vb-field-lbl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--on-var);margin-left:2px;}
-.vb-req{color:var(--coals);font-style:normal;margin-left:3px;}
-.vb-field input,.vb-field textarea,.vb-field select{font-family:inherit;font-size:15px;color:var(--on);background:var(--sc-low);border:1px solid var(--outline-var);border-radius:12px;padding:13px 16px;width:100%;outline:none;-webkit-appearance:none;appearance:none;}
-.vb-field input:focus,.vb-field textarea:focus,.vb-field select:focus{border-color:var(--coals);}
+.vb-field-lbl{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin-left:2px;}
+.vb-req{color:var(--ember);font-style:normal;margin-left:3px;}
+.vb-field input,.vb-field textarea,.vb-field select{font-family:inherit;font-size:15px;color:var(--on);background:var(--sc);border:1px solid var(--outline-var);border-radius:12px;padding:13px 16px;width:100%;outline:none;-webkit-appearance:none;appearance:none;caret-color:var(--ember);}
+.vb-field input:focus,.vb-field textarea:focus,.vb-field select:focus{border-color:var(--ember);}
 .vb-field select{background-image:var(--chev);background-repeat:no-repeat;background-position:right 13px center;padding-right:36px;}
-.vb-field input::placeholder,.vb-field textarea::placeholder{color:var(--on-var);opacity:.55;}
+.vb-field input::placeholder,.vb-field textarea::placeholder{color:var(--dim);opacity:1;}
 .vb-field textarea{resize:vertical;line-height:1.5;min-height:96px;}
 .vb-row{display:flex;gap:12px;}.vb-row .vb-field{flex:1;min-width:0;}
 .vb-group{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
 .vb-amt{display:flex;gap:8px;}
-.vb-amt input{flex:1;min-width:0;font-family:inherit;font-size:15px;color:var(--on);background:var(--sc-low);border:1px solid var(--outline-var);border-radius:12px;padding:13px 16px;outline:none;}
-.vb-amt input:focus{border-color:var(--coals);}
-.vb-amt select{width:92px;flex:none;font-family:inherit;font-size:15px;color:var(--on);background:var(--sc-low);border:1px solid var(--outline-var);border-radius:12px;padding:13px 30px 13px 14px;outline:none;-webkit-appearance:none;appearance:none;background-image:var(--chev);background-repeat:no-repeat;background-position:right 11px center;}
-.vb-seg{display:flex;height:44px;border:1px solid var(--outline-var);border-radius:12px;overflow:hidden;background:var(--sc-low);}
-.vb-seg-btn{flex:1;border:none;background:none;font-family:inherit;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--on-var);cursor:pointer;}
-.vb-seg-btn.is-on{background:var(--secondary);color:var(--on-secondary);}
+.vb-amt input{flex:1;min-width:0;font-family:inherit;font-size:15px;color:var(--on);background:var(--sc);border:1px solid var(--outline-var);border-radius:12px;padding:13px 16px;outline:none;caret-color:var(--ember);}
+.vb-amt input:focus{border-color:var(--ember);}
+.vb-amt select{width:92px;flex:none;font-family:inherit;font-size:15px;color:var(--on);background:var(--sc);border:1px solid var(--outline-var);border-radius:12px;padding:13px 30px 13px 14px;outline:none;-webkit-appearance:none;appearance:none;background-image:var(--chev);background-repeat:no-repeat;background-position:right 11px center;}
+.vb-seg{display:flex;height:44px;border:1px solid var(--outline-var);border-radius:12px;overflow:hidden;background:var(--sc);}
+.vb-seg-btn{flex:1;border:none;background:none;font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--on-var);cursor:pointer;}
+.vb-seg-btn.is-on{background:var(--ember);color:var(--on-accent);font-weight:600;}
 .vb-heatbar{display:flex;align-items:center;gap:10px;margin:-4px 2px 14px;}
 .vb-heatbar-fill{flex:1;height:8px;border-radius:4px;}
-.vb-heatbar-lbl{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--on-var);}
+.vb-heatbar-lbl{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);}
 .vb-hint{display:flex;align-items:center;gap:8px;color:var(--error);font-size:12.5px;margin:2px 0 12px;}
 .vb-hint.vb-soft{color:var(--on-var);}
 .vb-ings,.vb-fases{display:flex;flex-direction:column;gap:8px;}
 .vb-ing-row{display:flex;gap:8px;align-items:center;}
-.vb-ing-row input,.vb-ing-row select{font-family:inherit;font-size:14px;background:var(--sc-low);border:1px solid var(--outline-var);border-radius:12px;padding:12px 12px;color:var(--on);outline:none;-webkit-appearance:none;appearance:none;}
-.vb-ing-row input:focus{border-color:var(--coals);}
+.vb-ing-row input,.vb-ing-row select{font-family:inherit;font-size:14px;background:var(--sc);border:1px solid var(--outline-var);border-radius:12px;padding:12px 12px;color:var(--on);outline:none;-webkit-appearance:none;appearance:none;caret-color:var(--ember);}
+.vb-ing-row input:focus{border-color:var(--ember);}
 .vb-ing-name{flex:1;min-width:0;}
-.vb-ing-qty{width:56px;flex:none;text-align:right;}
+.vb-ing-qty{width:56px;flex:none;text-align:right;font-family:var(--mono);}
 .vb-ing-unit{width:68px;flex:none;padding-right:24px !important;background-image:var(--chev);background-repeat:no-repeat;background-position:right 8px center;}
-.vb-row-del{flex:none;width:36px;height:46px;display:grid;place-items:center;border:1px solid var(--outline-var);background:var(--sc-low);color:var(--error);border-radius:12px;cursor:pointer;padding:0;}
+.vb-row-del{flex:none;width:36px;height:46px;display:grid;place-items:center;border:1px solid var(--outline-var);background:var(--sc);color:var(--error);border-radius:12px;cursor:pointer;padding:0;}
 .vb-add-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;background:none;border:1px dashed var(--outline);color:var(--on-var);border-radius:11px;height:44px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;width:100%;}
-.vb-add-row:hover{border-color:var(--coals);color:var(--coals);}
+.vb-add-row:hover{border-color:var(--ember);color:var(--gloed);}
 /* fase-editor (§14.4) */
-.vb-fase{display:flex;flex-direction:column;gap:8px;background:var(--sc);border:1px solid var(--outline-var);border-radius:14px;padding:12px;}
+.vb-fase{display:flex;flex-direction:column;gap:8px;background:var(--sc);border:1px solid var(--outline-var);border-radius:13px;padding:12px;}
 .vb-fase-top{display:flex;align-items:center;gap:8px;}
-.vb-fase-no{flex:none;width:26px;height:26px;display:grid;place-items:center;border-radius:13px;background:var(--primary);color:var(--on-primary);font-size:13px;font-weight:700;}
+.vb-fase-no{flex:none;width:26px;height:26px;display:grid;place-items:center;border-radius:13px;background:var(--grad);color:var(--on-accent);font-size:13px;font-weight:700;}
 .vb-fase-vals{display:flex;align-items:center;gap:8px;}
 .vb-fase-vals .vb-fase-temp{flex:1;min-width:0;}
 .vb-fase-vals .vb-fase-time{flex:1.6;}
 .vb-fase-vals .vb-fase-temp input{flex:1;width:auto;}
-.vb-fase-temp{display:flex;align-items:center;gap:5px;background:var(--sc-low);border:1px solid var(--outline-var);border-radius:9px;padding:0 10px;flex:none;height:32px;}
-.vb-fase-tag{font-size:11px;color:var(--on-var);white-space:nowrap;flex:none;}
-.vb-fase-temp input{width:38px;border:none;background:none;font-family:inherit;font-size:13px;font-weight:600;text-align:right;padding:0;outline:none;color:var(--on);min-width:0;}
+.vb-fase-temp{display:flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--outline-var);border-radius:9px;padding:0 10px;flex:none;height:32px;}
+.vb-fase-tag{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);white-space:nowrap;flex:none;}
+.vb-fase-temp input{width:38px;border:none;background:none;font-family:var(--mono);font-size:12.5px;font-weight:600;text-align:right;padding:0;outline:none;color:var(--on);min-width:0;caret-color:var(--ember);}
 .vb-fase-deg{flex:none;}
-.vb-fase-deg{font-size:11px;color:var(--on-var);}
+.vb-fase-deg{font-family:var(--mono);font-size:10px;color:var(--dim);}
 .vb-fase-top .vb-row-del{margin-left:auto;width:32px;height:32px;border-radius:9px;}
-.vb-fase-mode{display:inline-flex;height:32px;background:var(--sc-low);border:1px solid var(--outline-var);border-radius:9px;overflow:hidden;flex:none;}
-.vb-fase-mode button{border:none;background:none;font-family:inherit;font-size:12px;font-weight:700;padding:0 13px;color:var(--on-var);cursor:pointer;}
-.vb-fase-mode button.on{background:var(--secondary);color:var(--on-secondary);}
-.vb-fase-desc{width:100%;font-family:inherit;font-size:13px;background:var(--sc-low);border:1px solid var(--outline-var);border-radius:10px;height:40px;padding:0 14px;color:var(--on);outline:none;}
-.vb-fase-desc:focus{border-color:var(--coals);}
-/* beoordeling (§14.5) */
-.vb-flames{display:flex;gap:12px;padding:4px 2px;}
-.vb-flames.sm{gap:4px;padding:0;}
-.vb-flame{border:none;background:none;padding:0;color:var(--outline);line-height:0;}
-.vb-flame.on{color:var(--coals);}
+.vb-fase-mode{display:inline-flex;height:32px;background:var(--surface);border:1px solid var(--outline-var);border-radius:9px;overflow:hidden;flex:none;}
+.vb-fase-mode button{border:none;background:none;font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:0 13px;color:var(--on-var);cursor:pointer;}
+.vb-fase-mode button.on{background:var(--ember);color:var(--on-accent);font-weight:600;}
+.vb-fase-desc{width:100%;font-family:inherit;font-size:13px;background:var(--surface);border:1px solid var(--outline-var);border-radius:10px;height:40px;padding:0 14px;color:var(--on);outline:none;caret-color:var(--ember);}
+.vb-fase-desc:focus{border-color:var(--ember);}
 /* rub-preview in cook-formulier */
 .vb-preview{margin:-4px 0 14px;background:var(--sc);border:1px solid var(--outline-var);border-radius:12px;padding:12px 14px;}
-.vb-ing-meta{font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--on-var);margin:0 0 6px;}
+.vb-ing-meta{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin:0 0 6px;}
 .vb-ing-note{font-size:12px;color:var(--error);margin:8px 0 0;}
 .vb-ing-list-view{list-style:none;margin:0;padding:0;font-size:13px;}
 .vb-ing-list-view li{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px dotted var(--outline-var);}
 .vb-ing-list-view li:last-child{border-bottom:none;}
-.vb-ing-amt{font-size:13px;font-weight:600;white-space:nowrap;}
+.vb-ing-amt{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--gloed);white-space:nowrap;}
 
 /* ---- knoppen (§14.6) ---- */
-.vb-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:inherit;font-weight:700;font-size:14px;height:50px;padding:0 18px;border-radius:25px;border:1px solid transparent;cursor:pointer;}
-.vb-btn-primary{background:var(--primary);color:var(--on-primary);}
-.vb-btn-primary:disabled{opacity:.45;cursor:not-allowed;}
+.vb-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:inherit;font-weight:600;font-size:14.5px;height:48px;padding:0 22px;border-radius:24px;border:1px solid transparent;cursor:pointer;}
+.vb-btn-primary{background:var(--grad);color:var(--on-accent);}
+.vb-btn-primary:hover{filter:brightness(1.08);}
+.vb-btn-primary:disabled{opacity:.45;cursor:not-allowed;filter:none;}
 .vb-btn-ghost{background:none;border-color:var(--outline);color:var(--on);}
-.vb-btn-ghost:hover{background:var(--sc-low);}
-.vb-btn-danger{background:#C0341A;color:#fff;height:36px;border-radius:18px;font-size:12.5px;}
+.vb-btn-ghost:hover{border-color:var(--ember);color:var(--gloed);}
+.vb-btn-danger{background:var(--deep);color:#F2EFE9;height:36px;border-radius:18px;font-size:12.5px;}
 .vb-btn-block{width:100%;margin-bottom:10px;}
 .vb-form-actions,.vb-detail-actions{display:flex;gap:12px;margin-top:22px;}
 .vb-form-actions .vb-btn,.vb-detail-actions .vb-btn{flex:1;}
@@ -192,81 +202,82 @@ input:focus-visible,textarea:focus-visible,select:focus-visible,.vb-btn:focus-vi
 
 /* ---- detail (§19/§21) ---- */
 .vb-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-top:6px;}
-.vb-detail-head h2{font-size:24px;font-weight:700;line-height:1.15;margin:0;}
+.vb-detail-head h2{font-size:24px;font-weight:700;letter-spacing:-0.025em;line-height:1.15;margin:0;}
+.vb-detail-head .vb-rate{padding-top:8px;}
 .vb-detail-meat{color:var(--on-var);margin:2px 0 0;font-size:13px;}
-.vb-detail-date{display:flex;align-items:center;gap:6px;color:var(--on-var);font-size:12.5px;margin:10px 0 0;}
+.vb-detail-date{display:flex;align-items:center;gap:6px;color:var(--on-var);font-family:var(--mono);font-size:11px;margin:10px 0 0;}
 .vb-gauges{display:flex;gap:10px;margin:14px 0 16px;}
-.vb-gauge{flex:1;background:var(--sc-low);border:1px solid var(--outline-var);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;}
-.vb-gauge-lbl{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--on-var);}
-.vb-gauge-val{font-weight:700;font-size:30px;line-height:1;}
-.vb-gauge-val i{font-size:14px;font-style:normal;font-weight:500;margin-left:2px;color:var(--on-var);}
-.vb-gauge-sub{font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--on-var);margin-top:1px;}
+.vb-gauge{flex:1;background:var(--sc);border:1px solid var(--outline-var);border-radius:13px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;}
+.vb-gauge-lbl{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);}
+.vb-gauge-val{font-family:var(--mono);font-weight:600;font-size:28px;line-height:1;color:var(--gloed);}
+.vb-gauge-val i{font-size:13px;font-style:normal;font-weight:500;margin-left:2px;color:var(--on-var);}
+.vb-gauge-sub{font-family:var(--mono);font-size:9px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-top:1px;}
 .vb-block{margin:0 0 16px;}
-.vb-block-title{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--coals);margin:0 0 8px;}
+.vb-block-title{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ember);margin:0 0 8px;}
 .vb-block p{margin:0;line-height:1.55;font-size:13px;}
 .vb-notes{white-space:pre-wrap;}
 .vb-fase-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
-.vb-fase-list li{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--sc-low);border:1px solid var(--outline-var);border-radius:12px;padding:10px 12px;}
-.vb-fase-list-no{flex:none;width:24px;height:24px;display:grid;place-items:center;border-radius:12px;background:var(--primary);color:var(--on-primary);font-size:12px;font-weight:700;}
-.vb-fase-list-temp{font-size:13px;font-weight:600;}
-.vb-fase-list-pit{font-size:11px;font-weight:700;color:#fff;border-radius:6px;padding:3px 7px;white-space:nowrap;}
+.vb-fase-list li{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--sc);border:1px solid var(--outline-var);border-radius:12px;padding:10px 12px;}
+.vb-fase-list-no{flex:none;width:24px;height:24px;display:grid;place-items:center;border-radius:12px;background:var(--grad);color:var(--on-accent);font-size:12px;font-weight:700;}
+.vb-fase-list-temp{font-family:var(--mono);font-size:12.5px;font-weight:600;}
+.vb-fase-list-pit{font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--on-accent);border-radius:6px;padding:3px 7px;white-space:nowrap;}
 .vb-fase-list-desc{color:var(--on-var);font-size:12.5px;width:100%;padding-left:32px;margin-top:-2px;}
 .vb-calc{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--on-var);margin-bottom:10px;}
-.vb-calc input{width:76px;font-family:inherit;font-size:14px;color:var(--on);background:var(--sc-low);border:1px solid var(--outline-var);border-radius:12px;padding:10px 12px;outline:none;text-align:right;}
-.vb-calc input:focus{border-color:var(--coals);}
-.vb-specs{margin:0 0 6px;border-top:1px solid #2b2a26;font-size:13px;}
-.vb-spec{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid #2b2a26;}
-.vb-spec dt{display:flex;align-items:center;gap:8px;color:var(--on-var);font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
-.vb-spec dt .vb-spec-ic{color:var(--coals);display:inline-flex;line-height:0;}
-.vb-spec dd{margin:0;font-weight:500;text-align:right;}
+.vb-calc input{width:76px;font-family:var(--mono);font-size:13px;color:var(--on);background:var(--sc);border:1px solid var(--outline-var);border-radius:12px;padding:10px 12px;outline:none;text-align:right;caret-color:var(--ember);}
+.vb-calc input:focus{border-color:var(--ember);}
+.vb-specs{margin:0 0 6px;border-top:1px solid var(--outline-var);font-size:13px;}
+.vb-spec{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:10px 0;border-bottom:1px solid var(--outline-var);}
+.vb-spec dt{display:flex;align-items:center;gap:8px;color:var(--dim);font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;}
+.vb-spec dt .vb-spec-ic{color:var(--ember);display:inline-flex;line-height:0;}
+.vb-spec dd{margin:0;font-family:var(--mono);font-size:12.5px;font-weight:500;color:var(--gloed);text-align:right;}
 .vb-coal{width:13px;height:13px;border-radius:3px;display:inline-block;background:linear-gradient(135deg,#4a4038,#191512);}
 .vb-del-link{display:flex;align-items:center;justify-content:center;gap:7px;margin:18px auto 0;background:none;border:none;color:var(--error);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
-.vb-del-confirm{margin-top:18px;background:#2A1713;border:1px solid #5A2A1A;border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.vb-del-confirm{margin-top:18px;background:var(--sc);border:1px solid var(--deep);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
 .vb-del-confirm span{font-size:13px;}
 .vb-del-confirm>div{display:flex;gap:8px;}
 .vb-del-confirm .vb-btn{height:36px;border-radius:18px;padding:0 16px;font-size:12.5px;}
 
 /* ---- filterpaneel / bottom sheet (§18) ---- */
 .vb-scrim{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:20;border:none;padding:0;cursor:default;width:100%;}
-.vb-sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--sc);border-radius:24px 24px 0 0;padding:10px 16px calc(22px + env(safe-area-inset-bottom));max-width:600px;margin:0 auto;max-height:85vh;max-height:85dvh;overflow-y:auto;}
-.vb-handle{width:36px;height:4px;border-radius:2px;background:var(--outline-var);margin:0 auto 14px;}
-.vb-sheet h6{margin:0 0 14px;font-size:16px;font-weight:700;color:var(--on);}
+.vb-sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--sc);border:1px solid var(--outline-var);border-bottom:none;border-radius:24px 24px 0 0;padding:10px 16px calc(22px + env(safe-area-inset-bottom));max-width:600px;margin:0 auto;max-height:85vh;max-height:85dvh;overflow-y:auto;}
+.vb-handle{width:36px;height:4px;border-radius:2px;background:var(--sc-high);margin:0 auto 14px;}
+.vb-sheet h6{margin:0 0 14px;font-size:16px;font-weight:700;letter-spacing:-0.01em;color:var(--on);}
 .vb-sheet .vb-field-lbl{display:block;margin:0 0 6px 2px;}
 .vb-sheet-actions{display:flex;gap:12px;margin-top:16px;}
 .vb-sheet-actions .vb-btn{flex:1;}
 .vb-sheet-actions .vb-btn-primary{flex:1.4;}
 
 /* ---- instellingen (§24) ---- */
-.vb-set-status{background:var(--sc-low);border:1px solid var(--outline-var);border-radius:12px;padding:12px 14px;font-size:12.5px;line-height:1.55;color:var(--on-var);margin-bottom:16px;}
+.vb-set-status{background:var(--sc);border:1px solid var(--outline-var);border-radius:12px;padding:12px 14px;font-size:12.5px;line-height:1.55;color:var(--on-var);margin-bottom:16px;}
 .vb-set-status b{color:var(--on);font-weight:600;}
 .vb-set-note{font-size:11.5px;color:var(--on-var);opacity:.85;line-height:1.5;margin-top:14px;}
 .vb-set-err{color:var(--error);}
 .vb-spin svg{animation:vbspin 1s linear infinite;}
 @keyframes vbspin{to{transform:rotate(360deg);}}
 .vb-sync-field{display:flex;gap:8px;margin:10px 0 12px;}
-.vb-sync-field input{flex:1;min-width:0;font-family:inherit;font-size:14px;color:var(--on);background:var(--sc-low);border:1px solid var(--outline-var);border-radius:12px;padding:12px 14px;outline:none;}
-.vb-sync-field input:focus{border-color:var(--coals);}
+.vb-sync-field input{flex:1;min-width:0;font-family:inherit;font-size:14px;color:var(--on);background:var(--sc);border:1px solid var(--outline-var);border-radius:12px;padding:12px 14px;outline:none;caret-color:var(--ember);}
+.vb-sync-field input:focus{border-color:var(--ember);}
 .vb-sync-field .vb-btn{height:46px;border-radius:23px;flex:none;}
-.vb-h2s{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--coals);margin:24px 0 8px;}
+.vb-h2s{font-family:var(--mono);font-size:10.5px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ember);margin:24px 0 8px;}
 
 /* ---- planner (cook-detail) ---- */
-.vb-plan-lbl{width:76px;flex:none;}
+.vb-plan-lbl{width:76px;flex:none;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);}
 .vb-calc input[type=time]{width:118px;text-align:left;}
 .vb-plan-res{margin-top:4px;}
-.vb-plan-time{margin-left:auto;font-weight:700;font-size:13px;white-space:nowrap;}
-.vb-plan-ic{color:var(--coals);display:inline-flex;line-height:0;}
+.vb-plan-time{margin-left:auto;font-family:var(--mono);font-weight:600;font-size:12.5px;color:var(--gloed);white-space:nowrap;}
+.vb-plan-ic{color:var(--ember);display:inline-flex;line-height:0;}
 
 /* ---- statistieken ---- */
 .vb-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 10px;}
 .vb-bar-row{margin-bottom:10px;}
 .vb-bar-row:last-child{margin-bottom:0;}
 .vb-bar-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:12.5px;margin-bottom:4px;}
-.vb-bar-top .vb-muted{font-size:11.5px;white-space:nowrap;flex:none;}
+.vb-bar-top .vb-muted{font-family:var(--mono);font-size:10px;letter-spacing:.04em;white-space:nowrap;flex:none;}
 .vb-bar-track{height:8px;border-radius:4px;background:var(--sc-high);}
-.vb-bar-fill{height:8px;border-radius:4px;background:var(--coals);}
+.vb-bar-fill{height:8px;border-radius:4px;background:var(--ember);}
 .vb-stat-sub{color:var(--on-var);font-size:12.5px;width:100%;}
 
-@media (max-width:380px){.vb-card-stats .vb-stat{gap:4px;}.vb-gauge-val{font-size:26px;}}
+@media (max-width:380px){.vb-gauge-val{font-size:24px;}}
 </style>
 </head>
 <body>
@@ -337,7 +348,10 @@ function ic(name, size, fill){
   var sw = (name==="plus"||name==="check") ? 2.5 : 2;
   return "<svg width='"+size+"' height='"+size+"' viewBox='0 0 24 24' fill='"+fill+"' stroke='"+(fill==="none"?"currentColor":"none")+"' stroke-width='"+sw+"' stroke-linecap='round' stroke-linejoin='round'>"+IC[name]+"</svg>";
 }
-var LOGO = "<svg class='vb-logo' viewBox='0 0 48 48' fill='none' aria-hidden='true'><circle cx='24' cy='24' r='22' fill='#151412' stroke='#E9A63C' stroke-width='2'/><path d='M24 12c1 4.4 4.4 6.6 6.6 9.2 2.2 2.6 3 5 3 7.4a9.6 9.6 0 1 1-19.2 0c0-1.7.7-3.5 1.8-4.7a3.9 3.9 0 0 0 3.9 3.9 3.9 3.9 0 0 0 3.9-3.9c0-2.1-.9-3-1.6-4.6C21.3 16.2 21.6 13.3 24 12z' fill='#E9A63C'/><path d='M24 21.5c.7 1.7 2.2 2.6 2.2 4.5A2.2 2.2 0 0 1 24 28.2a2.2 2.2 0 0 1-2.2-2.4c0-1 .4-1.6.9-2.3.5-.8.8-1.5 1.3-2z' fill='#8A3410'/></svg>";
+/* logo "de Gloedmeter": drie kolen + vonk (huisstijl §01) */
+var LOGO = "<svg class='vb-logo' viewBox='0 0 64 64' aria-hidden='true'><defs><linearGradient id='pk-g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#FFD34D'/><stop offset='1' stop-color='#FF9210'/></linearGradient></defs><circle cx='32' cy='7' r='3.5' fill='#FFD34D'/><rect x='12' y='30' width='10' height='22' rx='5' fill='url(#pk-g)'/><rect x='27' y='14' width='10' height='38' rx='5' fill='url(#pk-g)'/><rect x='42' y='24' width='10' height='28' rx='5' fill='url(#pk-g)'/></svg>";
+/* monochrome variant (kleur via currentColor) voor lege staten; <32px dus zonder vonk, staven verlengd */
+var LOGO_MONO = "<svg width='30' height='30' viewBox='0 0 64 64' fill='currentColor' aria-hidden='true'><rect x='12' y='26' width='10' height='26' rx='5'/><rect x='27' y='10' width='10' height='42' rx='5'/><rect x='42' y='20' width='10' height='32' rx='5'/></svg>";
 
 /* ===================== opslag ===================== */
 var KEY_RECEPTEN="vuurboek:recepten", KEY_RUBS="vuurboek:rubs", KEY_SIDES="vuurboek:sides", KEY_SAUZEN="vuurboek:sauzen", KEY_SYNC="vuurboek:sync", KEY_DELETED="vuurboek:deleted";
@@ -358,20 +372,20 @@ function persistTomb(){ persist(KEY_DELETED,TOMB); }
 })();
 
 /* ===================== reken-helpers ===================== */
-/* Pit-temperatuur kleurschaal (§9): 95→300 °C, drie stops, onderkant verloop op 72 % */
+/* Pit-temperatuur kleurschaal (§9): 95→300 °C over de hittegradiënt Gloed → Ember → Diep rood */
 function heatCalc(pit){
   var v=Number(pit); if(!v||isNaN(v)) return null;
   var t=Math.max(0,Math.min(1,(v-95)/(300-95)));
-  var st=[[242,183,5],[232,101,30],[192,52,26]], a,b,f;
+  var st=[[255,211,77],[255,146,16],[166,61,34]], a,b,f;
   if(t<0.5){ a=st[0]; b=st[1]; f=t/0.5; } else { a=st[1]; b=st[2]; f=(t-0.5)/0.5; }
   return [Math.round(a[0]+(b[0]-a[0])*f),Math.round(a[1]+(b[1]-a[1])*f),Math.round(a[2]+(b[2]-a[2])*f)];
 }
-function heatColor(pit, dark){
-  var c=heatCalc(pit); if(!c) return "#918D83";
-  if(dark) c=c.map(function(v){ return Math.round(v*0.72); });
+function heatColor(pit){
+  var c=heatCalc(pit); if(!c) return "#A39D93";
   return "rgb("+c.join(",")+")";
 }
-function heatEdge(pit){ var c=heatCalc(pit); if(!c) return "#47443D"; return "linear-gradient(180deg,"+heatColor(pit)+","+heatColor(pit,true)+")"; }
+/* hitterand: bovenkant schaalt mee met de pit-temperatuur, onderkant is altijd Ember */
+function heatEdge(pit){ var c=heatCalc(pit); if(!c) return "#2C2925"; return "linear-gradient(180deg,"+heatColor(pit)+",#FF9210)"; }
 function heatLabel(t){ var v=Number(t); if(!v||isNaN(v)) return ""; if(v<130) return "Low & slow"; if(v<200) return "Indirect garen"; if(v<270) return "Grillen"; return "Searen / pizza"; }
 function toGrams(val,eu){ var n=Number(val); if(!n||isNaN(n)) return 0; return eu==="kg"? n*1000 : n; }
 function fmtAmount(v){ if(v==null||isNaN(v)) return ""; var r; if(v>=10) r=Math.round(v); else if(v>=1) r=Math.round(v*10)/10; else r=Math.round(v*100)/100; return r.toLocaleString("nl-NL",{maximumFractionDigits:2}); }
@@ -498,7 +512,15 @@ function anyFilter(){
 function go(screen){ S.query=""; S.sheet=false; S.screen=screen; render(); }
 
 /* ===================== gedeelde bouwers ===================== */
-function iconBtn(name, label, onClick){ return el("button",{class:"vb-icon-btn","aria-label":label,onClick:onClick}, raw(ic(name,24))); }
+function iconBtn(name, label, onClick){ return el("button",{class:"vb-icon-btn","aria-label":label,onClick:onClick}, raw(ic(name,18))); }
+/* filterknop: drie horizontale streepjes (huisstijl §8.2) */
+function filterBtn(){ return el("button",{class:"vb-filterbtn"+(anyFilter()?" on":""),"aria-label":"Filteren en sorteren",onClick:function(){ S.sheet=true; render(); }}, el("i"), el("i"), el("i")); }
+/* mono-regel onder de zoekrij: actieve filters links (Gloed), teller rechts (huisstijl §8.2) */
+function fillFilterLine(node, active, count, noun){
+  clear(node);
+  node.appendChild(active.length ? el("b",{},"Filter: "+active.join(" · ")) : el("b",{}));
+  node.appendChild(el("span",{}, count+" "+noun));
+}
 function btn(cls, iconName, text, onClick, disabled){ var b=el("button",{class:cls,onClick:onClick}); if(disabled) b.disabled=true; if(iconName) b.appendChild(raw(ic(iconName,iconName==="check"?18:16))); if(text) b.appendChild(document.createTextNode(" "+text)); return b; }
 function field(label, control, req){ var l=el("label",{class:"vb-field"}); var sp=el("span",{class:"vb-field-lbl"},label); if(req) sp.appendChild(el("i",{class:"vb-req"},"*")); l.appendChild(sp); l.appendChild(control); return l; }
 function segmented(label, value, options, onChange){
@@ -510,26 +532,22 @@ function segmented(label, value, options, onChange){
   }},o)); });
   wrap.appendChild(seg); return wrap;
 }
-/* vlammen-beoordeling (§14.5): gevuld = coals, leeg = outline */
-function flames(value, editable, size, onChange){
-  var wrap=el("div",{class:"vb-flames"+(size<=18?" sm":"")});
+/* kooltjes-beoordeling (§14.5): 5 bolletjes, gevuld = Ember(-gradiënt), leeg = As */
+function rateDots(value, editable, dot, onChange){
+  var wrap=el("div",{class:"vb-rate"+(dot>=12?" lg":"")});
+  value=Number(value)||0;
+  if(!editable) wrap.setAttribute("aria-label", value+" van 5");
   for(var n=1;n<=5;n++){ (function(n){
-    var on=n<=value;
-    var b=el("button",{type:"button",class:"vb-flame"+(on?" on":""),style:{cursor:editable?"pointer":"default"},"aria-label":n+" van 5"}, raw(ic("flame",size,on?"currentColor":"none")));
-    if(editable) b.addEventListener("click",function(){ var nv = (n===value)? n-1 : n; onChange(nv); });
-    else b.disabled=true;
+    var sz=dot+"px";
+    var b=el(editable?"button":"span",{class:"vb-dot"+(n<=value?" on":""),style:{width:sz,height:sz,cursor:editable?"pointer":"default"}});
+    if(editable){ b.setAttribute("type","button"); b.setAttribute("aria-label",n+" van 5"); b.addEventListener("click",function(){ onChange(n===value? n-1 : n); }); }
     wrap.appendChild(b);
   })(n); }
   return wrap;
 }
-/* kaart-beoordeling (§8.4): gevulde vlam + cijfer, of outline-vlam + — */
-function cardRating(b){
-  var has=Number(b)>0;
-  return el("span",{class:"vb-rating"+(has?"":" none")},
-    el("span",{class:"vb-rating-ic"}, raw(ic("flame",14,has?"currentColor":"none"))),
-    has ? Number(b).toLocaleString("nl-NL",{minimumFractionDigits:1}) : "—");
-}
-function stat(iconName, value, label){ return el("span",{class:"vb-stat"}, el("span",{class:"vb-stat-ic"},raw(ic(iconName,17))), el("span",{class:"vb-stat-val"},value), el("span",{class:"vb-stat-lbl"},label)); }
+/* kaart-beoordeling (§8.4): 5 kooltjes rechtsboven */
+function cardRating(b){ return rateDots(b,false,8); }
+function stat(value, label){ return el("span",{class:"vb-stat"}, el("span",{class:"vb-stat-val"},value), el("span",{class:"vb-stat-lbl"},label)); }
 function gauge(label, value, color, sub){ var g=el("div",{class:"vb-gauge"}, el("span",{class:"vb-gauge-lbl"},label)); var val=el("span",{class:"vb-gauge-val",style:{color:color}}, value? String(value) : "—"); val.appendChild(el("i",{}, value? "°C" : "")); g.appendChild(val); if(sub) g.appendChild(el("span",{class:"vb-gauge-sub"},sub)); return g; }
 function block(title, body){ var s=el("section",{class:"vb-block"}); var h=el("h3",{class:"vb-block-title"}); if(typeof title==="string") h.textContent=title; else h.appendChild(title); s.appendChild(h); append(s,body); return s; }
 function scaledIngredients(rub, weightG, hideMeta){
@@ -585,7 +603,7 @@ function header(){
   }
   var inner=el("div",{class:"vb-top-inner"});
   inner.appendChild(raw(LOGO));
-  inner.appendChild(el("div",{class:"vb-brand"}, el("span",{class:"vb-brand-name"},"Pitkeeper"), el("span",{class:"vb-brand-sub"},"BBQ receptenlogboek")));
+  inner.appendChild(el("div",{class:"vb-brand"}, el("span",{class:"vb-brand-name"},"pitkeeper"), el("span",{class:"vb-brand-sub"},"BBQ receptenlogboek")));
   if(SY.token){ var sb=iconBtn("refresh","Nu synchroniseren",function(){ syncNow(true); }); sb.id="vb-sync-btn"; if(SY.busy) sb.classList.add("vb-spin"); inner.appendChild(sb); }
   inner.appendChild(iconBtn("chart","Statistieken",function(){ S.prevTab=S.screen; S.screen="stats"; render(); }));
   inner.appendChild(iconBtn("settings","Instellingen",function(){ S.prevTab=S.screen; S.screen="settings"; render(); }));
@@ -595,16 +613,14 @@ function tabs(){
   var tab=S.screen;
   var nav=el("nav",{class:"vb-tabs"});
   var inner=el("div",{class:"vb-tabs-inner"});
-  function navItem(id,iconName,label){
+  function navItem(id,label){
     var on=tab===id;
-    var fill=(id==="cooks"&&on)?"currentColor":"none";
-    return el("button",{class:"vb-tab"+(on?" on":""),"aria-label":label,onClick:function(){go(id);}},
-      el("span",{class:"vb-ind"}, raw(ic(iconName,22,fill))), el("span",{},label));
+    return el("button",{class:"vb-tab"+(on?" on":""),"aria-label":label,onClick:function(){go(id);}}, label);
   }
-  inner.appendChild(navItem("cooks","flame","Cooks"));
-  inner.appendChild(navItem("rubs","flask","Rubs"));
-  inner.appendChild(navItem("sides","bowl","Sides"));
-  inner.appendChild(navItem("sauzen","droplet","Sauzen"));
+  inner.appendChild(navItem("cooks","Cooks"));
+  inner.appendChild(navItem("rubs","Rubs"));
+  inner.appendChild(navItem("sides","Sides"));
+  inner.appendChild(navItem("sauzen","Sauzen"));
   nav.appendChild(inner); return nav;
 }
 function fabAdd(){
@@ -631,6 +647,7 @@ function storageBanner(){ return el("div",{class:"vb-banner",html:"<b>Let op:</b
 function cookList(){
   var wrap=el("div");
   if(!storageOK) wrap.appendChild(storageBanner());
+  var fline=el("div",{class:"vb-filterline"});
   var results=el("div");
   function draw(){
     clear(results);
@@ -657,6 +674,8 @@ function cookList(){
       return true;
     });
     list=applySort(list,S.sortCook);
+    var tempLbl={low:"< 130°",mid:"130–200°",high:"> 200°"};
+    fillFilterLine(fline, [].concat(f.cat, f.methode, f.temp.map(function(t){return tempLbl[t];}), f.houtskool, f.rookhout), list.length, "cooks");
     if(S.recepten.length===0){ results.appendChild(emptyState("flame","Nog geen cooks gelogd","Leg je eerste vuur vast — vlees, rub, temperatuur en hoe het uitpakte.","Eerste cook toevoegen",fabAdd)); return; }
     if(list.length===0){ results.appendChild(el("p",{class:"vb-muted vb-center"}, q ? 'Niets gevonden voor "'+S.query+'".' : "Geen cooks binnen dit filter.")); return; }
     var ul=el("ul",{class:"vb-cards"});
@@ -668,7 +687,7 @@ function cookList(){
         el("div",{class:"vb-card-txt"}, el("h3",{},r.naam), el("p",{class:"vb-card-meat"}, r.soortVlees + (r.gewicht? " · "+fmtAmount(r.gewicht)+" "+r.gewichtEenheid : ""))),
         cardRating(r.beoordeling)));
       body.appendChild(el("div",{class:"vb-div"}));
-      body.appendChild(el("div",{class:"vb-card-stats"}, stat("thermometer", ep?ep+"°":"—","Pit"), stat("flame", fk?fk+"°":"—","Kern"), stat("clock", r.gaartijd||"—","Gaartijd")));
+      body.appendChild(el("div",{class:"vb-card-stats"}, stat(ep?ep+"°C":"—","Pit"), stat(r.gaartijd||"—","Duur"), stat(fk?fk+"°C":"—","Kern")));
       card.appendChild(body); ul.appendChild(el("li",{},card));
     });
     results.appendChild(ul);
@@ -676,8 +695,9 @@ function cookList(){
   if(S.recepten.length>0){
     var row=el("div",{class:"vb-searchrow"});
     row.appendChild(searchBar("Zoek op naam, rub, notities…", draw));
-    row.appendChild(el("button",{class:"vb-filterbtn"+(anyFilter()?" on":""),"aria-label":"Filteren en sorteren",onClick:function(){ S.sheet=true; render(); }}, raw(ic("filter",22))));
+    row.appendChild(filterBtn());
     wrap.appendChild(row);
+    wrap.appendChild(fline);
     wrap.appendChild(el("div",{class:"vb-legend"}, el("span",{},"Laag"), el("span",{class:"vb-legend-bar"}), el("span",{},"Hoog · Temperatuur")));
   }
   wrap.appendChild(results); draw();
@@ -772,6 +792,7 @@ function filterSheet(){
 function rubList(){
   var wrap=el("div");
   if(!storageOK) wrap.appendChild(storageBanner());
+  var fline=el("div",{class:"vb-filterline"});
   var results=el("div");
   function draw(){
     clear(results);
@@ -782,6 +803,7 @@ function rubList(){
       return true;
     });
     list=applySort(list,S.sortRub);
+    fillFilterLine(fline, f.type.slice(), list.length, "rubs");
     if(S.rubs.length===0){ results.appendChild(emptyState("flask","Nog geen rubs of marinades","Maak je eigen rub of marinade aan met ingrediënten en het referentiegewicht vlees — in een cook schalen de hoeveelheden automatisch mee.","Rub of marinade toevoegen",fabAdd)); return; }
     if(list.length===0){ results.appendChild(el("p",{class:"vb-muted vb-center"}, q ? 'Niets gevonden voor "'+S.query+'".' : "Geen rubs binnen dit filter.")); return; }
     var ul=el("ul",{class:"vb-cards"});
@@ -798,8 +820,9 @@ function rubList(){
   if(S.rubs.length>0){
     var row=el("div",{class:"vb-searchrow"});
     row.appendChild(searchBar("Zoek op naam of ingrediënt…", draw));
-    row.appendChild(el("button",{class:"vb-filterbtn"+(anyFilter()?" on":""),"aria-label":"Filteren en sorteren",onClick:function(){ S.sheet=true; render(); }}, raw(ic("filter",22))));
+    row.appendChild(filterBtn());
     wrap.appendChild(row);
+    wrap.appendChild(fline);
   }
   wrap.appendChild(results); draw();
   return wrap;
@@ -816,6 +839,7 @@ function portiesInRange(p, range){
 function simpleList(cfg){
   var wrap=el("div");
   if(!storageOK) wrap.appendChild(storageBanner());
+  var fline=el("div",{class:"vb-filterline"});
   var results=el("div");
   function draw(){
     clear(results);
@@ -826,6 +850,8 @@ function simpleList(cfg){
       return true;
     });
     list=applySort(list,S[cfg.sortKey]);
+    var rangeLbl={"1-4":"1–4 pers.","5-8":"5–8 pers.","9":"9+ pers."};
+    fillFilterLine(fline, f.porties.map(function(rng){return rangeLbl[rng];}), list.length, cfg.listKey);
     if(S[cfg.listKey].length===0){ results.appendChild(emptyState(cfg.icon,cfg.emptyTitle,cfg.emptyText,cfg.emptyBtn,fabAdd)); return; }
     if(list.length===0){ results.appendChild(el("p",{class:"vb-muted vb-center"}, q ? 'Niets gevonden voor "'+S.query+'".' : cfg.emptyFilter)); return; }
     var ul=el("ul",{class:"vb-cards"});
@@ -846,8 +872,9 @@ function simpleList(cfg){
   if(S[cfg.listKey].length>0){
     var row=el("div",{class:"vb-searchrow"});
     row.appendChild(searchBar("Zoek op naam of ingrediënt…", draw));
-    row.appendChild(el("button",{class:"vb-filterbtn"+(anyFilter()?" on":""),"aria-label":"Filteren en sorteren",onClick:function(){ S.sheet=true; render(); }}, raw(ic("filter",22))));
+    row.appendChild(filterBtn());
     wrap.appendChild(row);
+    wrap.appendChild(fline);
   }
   wrap.appendChild(results); draw();
   return wrap;
@@ -857,10 +884,12 @@ function searchBar(placeholder, onChange){
   var input=el("input",{value:S.query,placeholder:placeholder,"aria-label":placeholder});
   var clearBtn=el("button",{class:"vb-clear","aria-label":"Wissen",style:{display:S.query?"grid":"none"},onClick:function(){ S.query=""; input.value=""; clearBtn.style.display="none"; onChange(); input.focus(); }}, raw(ic("x",15)));
   input.addEventListener("input",function(){ S.query=input.value; clearBtn.style.display=input.value?"grid":"none"; onChange(); });
-  return el("div",{class:"vb-search"}, raw(ic("search",22)), input, clearBtn);
+  return el("div",{class:"vb-search"}, raw(ic("search",18)), input, clearBtn);
 }
 function emptyState(iconName,title,text,btnText,onClick){
-  return el("div",{class:"vb-empty"}, el("span",{class:"vb-empty-flame"},raw(ic(iconName,iconName==="flame"?30:28))), el("h2",{},title), el("p",{},text), btn("vb-btn vb-btn-primary","plus",btnText,onClick));
+  /* de vlam is vervangen door het monochrome beeldmerk (huisstijl: empty-state = logo in Rook) */
+  var icon = iconName==="flame" ? LOGO_MONO : ic(iconName,28);
+  return el("div",{class:"vb-empty"}, el("span",{class:"vb-empty-flame"},raw(icon)), el("h2",{},title), el("p",{},text), btn("vb-btn vb-btn-primary","plus",btnText,onClick));
 }
 
 /* ===================== COOK-FORMULIER (§15) ===================== */
@@ -981,8 +1010,14 @@ function cookForm(){
   /* geen field() (dat wikkelt in een <label>, waardoor een klik op een chip ook de eerste chip togglet) */
   form.appendChild(el("div",{class:"vb-field"}, el("span",{class:"vb-field-lbl"},"Rookhout (optioneel — meerdere mogelijk)"), rhBox));
 
-  var flBox=el("div"); function drawFl(){ clear(flBox); flBox.appendChild(flames(d.beoordeling,true,26,function(v){ d.beoordeling=v; drawFl(); })); }
-  drawFl(); form.appendChild(field("Beoordeling",flBox));
+  var flBox=el("div",{class:"vb-rate-card"});
+  function drawFl(){
+    clear(flBox);
+    flBox.appendChild(el("span",{class:"vb-field-lbl"},"Beoordeling"));
+    flBox.appendChild(rateDots(d.beoordeling,true,14,function(v){ d.beoordeling=v; drawFl(); }));
+    flBox.appendChild(el("span",{class:"vb-rate-val"}, d.beoordeling? d.beoordeling+"/5 kolen" : "—"));
+  }
+  drawFl(); form.appendChild(flBox);
 
   var notes=el("textarea",{rows:"4",placeholder:"Wat ging goed, wat de volgende keer anders — wrappen, spritzen, vuurbeheer…"}); notes.value=d.notities; notes.addEventListener("input",function(){ d.notities=notes.value; });
   form.appendChild(field("Notities & volgende keer",notes));
@@ -1135,9 +1170,9 @@ function cookDetail(){
   var fk=finalKern(r.kernFases); var fases=(r.kernFases||[]).filter(faseHeeftInhoud); var ep=effPit(r);
   var linkedRub=S.rubs.filter(function(x){return x.id===r.rubRef;})[0]; var weightG=toGrams(r.gewicht,r.gewichtEenheid);
   var wrap=el("div",{class:"vb-detail"});
-  wrap.appendChild(el("div",{class:"vb-detail-head"}, el("div",{}, el("h2",{},r.naam), el("p",{class:"vb-detail-meat"},r.soortVlees)), flames(r.beoordeling,false,18)));
+  wrap.appendChild(el("div",{class:"vb-detail-head"}, el("div",{}, el("h2",{},r.naam), el("p",{class:"vb-detail-meat"},r.soortVlees)), rateDots(r.beoordeling,false,9)));
   if(r.datum) wrap.appendChild(el("p",{class:"vb-detail-date"}, raw(ic("calendar",14)), " "+formatDate(r.datum)));
-  wrap.appendChild(el("div",{class:"vb-gauges"}, gauge("Pit",ep,heatColor(ep),heatLabel(ep)), gauge("Kern (doel)",fk,"var(--on)", fases.length?"Laatste fase":"")));
+  wrap.appendChild(el("div",{class:"vb-gauges"}, gauge("Pit",ep,"var(--gloed)",heatLabel(ep)), gauge("Kern (doel)",fk,"var(--gloed)", fases.length?"Laatste fase":"")));
 
   if(fases.length){ var ol=el("ol",{class:"vb-fase-list"}); fases.forEach(function(p,i){ var li=el("li",{}, el("span",{class:"vb-fase-list-no"},String(i+1)), el("span",{class:"vb-fase-list-temp"},faseLabel(p))); if(p.pit) li.appendChild(el("span",{class:"vb-fase-list-pit",style:{background:heatColor(p.pit)}},"pit "+p.pit+"°")); if(p.beschrijving) li.appendChild(el("span",{class:"vb-fase-list-desc"},p.beschrijving)); ol.appendChild(li); }); wrap.appendChild(block("Fasen — kern of tijd",ol)); }
 
@@ -1267,7 +1302,7 @@ function statsScreen(){
     var bb=el("button",{class:"vb-card",onClick:function(){ S.selCook=best.id; S.screen="cook-detail"; render(); }});
     bb.appendChild(el("div",{class:"vb-card-body",style:{display:"flex",alignItems:"center",gap:"10px",padding:"12px 14px"}},
       el("div",{class:"vb-card-txt"}, el("h3",{},best.naam), el("p",{class:"vb-card-meat"},"Hoogst beoordeeld · "+best.soortVlees)),
-      flames(Number(best.beoordeling),false,16)));
+      rateDots(best.beoordeling,false,8)));
     totBody.push(bb);
   }
   wrap.appendChild(block("Totalen", totBody));
