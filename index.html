@@ -1102,7 +1102,7 @@ function plannerBlock(r){
       leeg:function(){ return !String(u.value).trim() && !String(m.value).trim(); },
       min:function(){ return (Number(u.value)||0)*60+(Number(m.value)||0); }};
   }
-  var gaar=duurPair(gaarMin), rust=duurPair(rustMin), stook=duurPair(45);
+  var gaar=duurPair(gaarMin), rust=duurPair(rustMin), stook=duurPair(30);
   function duurRij(lbl,p){ return el("div",{class:"vb-calc"}, el("span",{class:"vb-plan-lbl"},lbl), p.u, el("span",{},"u"), p.m, el("span",{},"min")); }
   function fmtKlok(min){ var mm=((min%1440)+1440)%1440, h=Math.floor(mm/60), m2=mm%60; return (h<10?"0":"")+h+":"+(m2<10?"0":"")+m2; }
   function recalc(){
