@@ -26,10 +26,16 @@ body{overscroll-behavior:none;color-scheme:dark;
   background:var(--surface);color:var(--on);
   font-family:'Space Grotesk',system-ui,sans-serif;
   min-height:100vh;-webkit-font-smoothing:antialiased;}
+/* ---- light mode: zelfde huisstijl, lichte tinten (schakelbaar via Instellingen ▸ Weergave) ---- */
+body.light{color-scheme:light;
+  --surface:#F6F3ED;--sc-low:#FFFFFF;--sc:#FFFFFF;--sc-high:#ECE6DA;
+  --on:#26221D;--on-var:#6B655B;--dim:#8B8474;--outline:#C8C1B2;--outline-var:#E2DBCE;
+  --ember:#C96E00;--gloed:#A85A00;--deep:#A63D22;--error:#B4482A;
+  --chev:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%236B655B' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");}
 svg{display:block;}
 ::selection{background:var(--ember);color:var(--on-accent);}
 .vb-main{max-width:600px;margin:0 auto;padding:2px 16px 40px;}
-.vb-main.tabbed{padding-bottom:160px;}
+.vb-main.tabbed{padding-bottom:150px;}
 
 /* ---- topbar (§8.1) ---- */
 .vb-top{position:sticky;top:0;z-index:10;background:var(--surface);}
@@ -48,14 +54,14 @@ svg{display:block;}
 input:focus-visible,textarea:focus-visible,select:focus-visible,.vb-btn:focus-visible,.vb-chip:focus-visible{outline:2px solid var(--ember);outline-offset:2px;}
 .vb-muted{color:var(--on-var);}.vb-center{text-align:center;padding:40px 0;font-size:13px;}
 
-/* ---- navigatiebalk (§8.6): zwevend, labels-only ---- */
-.vb-tabs{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:18px;right:18px;z-index:10;}
-.vb-tabs-inner{max-width:600px;margin:0 auto;display:flex;background:var(--sc);border:1px solid var(--outline-var);border-radius:20px;padding:6px;}
+/* ---- navigatiebalk (§8.6): vast aan de onderkant, volle breedte, labels-only ---- */
+.vb-tabs{position:fixed;bottom:0;left:0;right:0;z-index:10;background:var(--sc);border-top:1px solid var(--outline-var);padding:8px 16px calc(8px + env(safe-area-inset-bottom));}
+.vb-tabs-inner{max-width:600px;margin:0 auto;display:flex;gap:4px;}
 .vb-tab{flex:1;border:none;background:none;padding:10px 0;border-radius:14px;color:var(--on-var);cursor:pointer;font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;text-align:center;}
 .vb-tab.on{background:var(--ember);color:var(--on-accent);font-weight:600;}
 
 /* ---- FAB (§8.5) ---- */
-.vb-fab{position:fixed;z-index:11;width:52px;height:52px;border-radius:16px;border:none;display:flex;align-items:center;justify-content:center;background:var(--grad);color:var(--on-accent);cursor:pointer;box-shadow:0 10px 24px -8px rgba(255,146,16,.4);right:max(18px,calc(50% - 282px));bottom:calc(74px + env(safe-area-inset-bottom));}
+.vb-fab{position:fixed;z-index:11;width:52px;height:52px;border-radius:16px;border:none;display:flex;align-items:center;justify-content:center;background:var(--grad);color:var(--on-accent);cursor:pointer;box-shadow:0 10px 24px -8px rgba(255,146,16,.4);right:max(18px,calc(50% - 282px));bottom:calc(66px + env(safe-area-inset-bottom));}
 .vb-fab:hover{filter:brightness(1.08);}
 
 /* ---- zoekrij (§8.2) ---- */
@@ -360,6 +366,14 @@ function load(key){ if(!storageOK) return null; try{ var v=localStorage.getItem(
 function persist(key, list){ if(!storageOK) return; try{ localStorage.setItem(key, JSON.stringify(list)); }catch(e){} }
 function loadObj(key){ if(!storageOK) return {}; try{ var v=localStorage.getItem(key); var o=v?JSON.parse(v):{}; return (o&&typeof o==="object"&&!Array.isArray(o))?o:{}; }catch(e){ return {}; } }
 var SY=Object.assign({token:"",gistId:"",lastSync:0,dirty:false}, loadObj(KEY_SYNC)); SY.busy=false; SY.error=""; SY.queued=false;
+/* thema is een apparaat-voorkeur: lokaal bewaard, niet gesynct */
+var KEY_THEME="vuurboek:theme";
+var THEME=(function(){ if(!storageOK) return "dark"; try{ return localStorage.getItem(KEY_THEME)==="light"?"light":"dark"; }catch(e){ return "dark"; } })();
+function applyTheme(){
+  document.body.classList.toggle("light",THEME==="light");
+  var m=document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute("content",THEME==="light"?"#F6F3ED":"#121110");
+}
+function setTheme(t){ THEME=t; if(storageOK){ try{ localStorage.setItem(KEY_THEME,t); }catch(e){} } applyTheme(); }
 var TOMB=loadObj(KEY_DELETED);
 function persistSync(){ persist(KEY_SYNC,{token:SY.token,gistId:SY.gistId,lastSync:SY.lastSync,dirty:SY.dirty}); }
 function persistTomb(){ persist(KEY_DELETED,TOMB); }
@@ -381,11 +395,11 @@ function heatCalc(pit){
   return [Math.round(a[0]+(b[0]-a[0])*f),Math.round(a[1]+(b[1]-a[1])*f),Math.round(a[2]+(b[2]-a[2])*f)];
 }
 function heatColor(pit){
-  var c=heatCalc(pit); if(!c) return "#A39D93";
+  var c=heatCalc(pit); if(!c) return "var(--on-var)";
   return "rgb("+c.join(",")+")";
 }
 /* hitterand: bovenkant schaalt mee met de pit-temperatuur, onderkant is altijd Ember */
-function heatEdge(pit){ var c=heatCalc(pit); if(!c) return "#2C2925"; return "linear-gradient(180deg,"+heatColor(pit)+",#FF9210)"; }
+function heatEdge(pit){ var c=heatCalc(pit); if(!c) return "var(--outline-var)"; return "linear-gradient(180deg,"+heatColor(pit)+",#FF9210)"; }
 function heatLabel(t){ var v=Number(t); if(!v||isNaN(v)) return ""; if(v<130) return "Low & slow"; if(v<200) return "Indirect garen"; if(v<270) return "Grillen"; return "Searen / pizza"; }
 function toGrams(val,eu){ var n=Number(val); if(!n||isNaN(n)) return 0; return eu==="kg"? n*1000 : n; }
 function fmtAmount(v){ if(v==null||isNaN(v)) return ""; var r; if(v>=10) r=Math.round(v); else if(v>=1) r=Math.round(v*10)/10; else r=Math.round(v*100)/100; return r.toLocaleString("nl-NL",{maximumFractionDigits:2}); }
@@ -1357,6 +1371,7 @@ function statsScreen(){
 /* ===================== INSTELLINGEN (§24) ===================== */
 function settings(){
   var wrap=el("div",{style:{paddingTop:"6px"}});
+  wrap.appendChild(segmented("Weergave", THEME==="light"?"Licht":"Donker", ["Donker","Licht"], function(v){ setTheme(v==="Licht"?"light":"dark"); }));
   var statusHtml = storageOK
     ? "<b>Automatisch opslaan: aan.</b> Je cooks, rubs, bijgerechten en sauzen worden bewaard op dit apparaat. Maak af en toe een back-up met Exporteren."
     : "<b>Automatisch opslaan: uit.</b> Dit bestand draait zonder vaste opslag-locatie. Wat je invult blijft alleen tijdens deze sessie bewaard — gebruik <b>Exporteren</b> om je gegevens als bestand op te slaan, en <b>Importeren</b> om ze terug te laden.";
@@ -1575,6 +1590,7 @@ function render(keepScroll){
   if(!keepScroll) window.scrollTo(0,0);
 }
 
+applyTheme();
 render();
 if(SY.token) syncNow();
 window.addEventListener("online",function(){ if(SY.token && SY.dirty) syncNow(); });
