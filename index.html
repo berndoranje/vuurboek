@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#272017">
+<meta name="theme-color" content="#3A2114">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="pitkeeper">
@@ -22,7 +22,7 @@ body{overscroll-behavior:none;color-scheme:dark;
   --surface:#121110;--sc-low:#1B1917;--sc:#1B1917;--sc-high:#35312C;
   --on:#F2EFE9;--on-var:#A39D93;--dim:#6E685F;--outline:#47433C;--outline-var:#2C2925;
   --ember:#FF9210;--gloed:#FFD34D;--deep:#A63D22;--on-accent:#171310;--error:#C9603F;
-  --topbar:#272017;
+  --topbar:#3A2114;
   --grad:linear-gradient(160deg,#FFD34D,#FF9210);
   --mono:'IBM Plex Mono',monospace;
   --chev:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23A39D93' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
@@ -34,7 +34,7 @@ body.light{color-scheme:light;
   --surface:#F6F3ED;--sc-low:#FFFFFF;--sc:#FFFFFF;--sc-high:#ECE6DA;
   --on:#26221D;--on-var:#6B655B;--dim:#8B8474;--outline:#C8C1B2;--outline-var:#E2DBCE;
   --ember:#C96E00;--gloed:#A85A00;--deep:#A63D22;--error:#B4482A;
-  --topbar:#EFE5D2;
+  --topbar:#EBD3B0;
   --chev:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%236B655B' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");}
 svg{display:block;}
 ::selection{background:var(--ember);color:var(--on-accent);}
@@ -375,7 +375,7 @@ var KEY_THEME="vuurboek:theme";
 var THEME=(function(){ if(!storageOK) return "dark"; try{ return localStorage.getItem(KEY_THEME)==="light"?"light":"dark"; }catch(e){ return "dark"; } })();
 function applyTheme(){
   document.body.classList.toggle("light",THEME==="light");
-  var m=document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute("content",THEME==="light"?"#EFE5D2":"#272017");
+  var m=document.querySelector('meta[name="theme-color"]'); if(m) m.setAttribute("content",THEME==="light"?"#EBD3B0":"#3A2114");
 }
 function setTheme(t){ THEME=t; if(storageOK){ try{ localStorage.setItem(KEY_THEME,t); }catch(e){} } applyTheme(); }
 var TOMB=loadObj(KEY_DELETED);
